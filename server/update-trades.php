@@ -142,6 +142,7 @@ if ($acc) {
         'gain'         => (float) ($acc['gain'] ?? 0),
         'profitFactor' => (float) ($acc['profitFactor'] ?? 0),
         'drawdown'     => (float) ($acc['drawdown'] ?? 0),
+        'openPct'      => ((float) ($acc['balance'] ?? 0)) > 0 ? round((((float) ($acc['equity'] ?? 0)) - (float) $acc['balance']) * 100 / (float) $acc['balance'], 2) : 0,
         'winRate'      => $allCount ? round($wins * 100 / $allCount, 1) : 0,
         'trades'       => $allCount,
         'avgWin'       => $winP ? round(array_sum($winP) / count($winP), 2) : 0,

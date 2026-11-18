@@ -168,6 +168,7 @@ def kind_growth():
     cv = get('curve.json').get('points', []); st = get('stats.json')
     if len(cv) < 3: raise SystemExit('not enough points')
     pts = [0.0] + [p['g'] for p in cv]
+    if st.get('openPct'): pts.append(round(((1 + pts[-1] / 100) * (1 + st['openPct'] / 100) - 1) * 100, 2))  # now, incl. open trades
     if abs(pts[-1] - st['gain']) > 0.15 * max(10.0, abs(st['gain'])): raise SystemExit('curve does not match the account gain')
     label = 'ACCOUNT GROWTH'
     lo, hi = min(pts + [0]), max(pts)
