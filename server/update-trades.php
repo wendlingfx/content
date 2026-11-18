@@ -127,7 +127,7 @@ echo 'ok: ' . count($latest) . " trades\n";
 $g = 1.0; $curve = [];
 foreach ($all as $t) { $g *= 1 + $t['pct'] / 100; $curve[] = ['t' => $t['closed'], 'g' => round(($g - 1) * 100, 2)]; }
 $cf = dirname(__DIR__) . '/data/curve.json';
-file_put_contents($cf . '.tmp', json_encode(['updated' => gmdate('Y-m-d\TH:i\Z'), 'actions' => $actions, 'balance' => $acc ? (float) ($acc['balance'] ?? 0) : null, 'equity' => $acc ? (float) ($acc['equity'] ?? 0) : null, 'points' => $curve], JSON_UNESCAPED_SLASHES));
+file_put_contents($cf . '.tmp', json_encode(['updated' => gmdate('Y-m-d\TH:i\Z'), 'actions' => $actions, 'points' => $curve], JSON_UNESCAPED_SLASHES));
 rename($cf . '.tmp', $cf);
 echo 'ok: curve ' . count($curve) . " points\n";
 
