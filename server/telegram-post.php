@@ -38,6 +38,19 @@ $log = []; $sent = 0;
 
 $key = fn($t) => $t['closed'] . '|' . $t['symbol'] . '|' . $t['side'] . '|' . ($t['pct'] ?? $t['result']);
 
+// One time: set the channel photo from the repo (needs "Change channel info" for the bot).
+if (empty($state['photoSet'])) {
+    $img = @file_get_contents('https://raw.githubusercontent.com/wendlingfx/content/main/brand/channel.png');
+    if ($img !== false && strlen($img) > 1000) {
+        $tmp = sys_get_temp_dir() . '/wfx-channel.png'; file_put_contents($tmp, $img);
+        $ch = curl_init('https://api.telegram.org/bot' . $token . '/setChatPhoto');
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 60, CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => ['chat_id' => $chat, 'photo' => new CURLFile($tmp, 'image/png', 'channel.png')]]);
+        $r = json_decode((string) curl_exec($ch), true); curl_close($ch); @unlink($tmp);
+        if (!empty($r['ok'])) { $state['photoSet'] = true; $log[] = 'photo set'; } else { $log[] = 'photo: ' . ($r['description'] ?? 'failed'); }
+    }
+}
+
 // First run: say hello once and mark the trades already closed as seen.
 if (!$state['seeded']) {
     $msg = "Wendling FX: live account updates.\n\n"
