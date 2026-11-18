@@ -65,9 +65,10 @@ if ($ra && empty($ra['error']) && !empty($ra['accounts'])) {
 }
 
 // Every balance event (trades, deposits, withdrawals), oldest first.
-$events = [];
+$events = []; $actions = [];
 foreach ($history as $t) {
     $action = strtolower(trim($t['action'] ?? ''));
+    $actions[$action] = ($actions[$action] ?? 0) + 1;
     $closed = DateTime::createFromFormat('m/d/Y H:i', $t['closeTime'] ?? ($t['openTime'] ?? ''), new DateTimeZone('UTC'));
     if (!$closed) $closed = DateTime::createFromFormat('m/d/Y H:i', $t['openTime'] ?? '', new DateTimeZone('UTC'));
     if (!$closed) continue;
@@ -126,7 +127,7 @@ echo 'ok: ' . count($latest) . " trades\n";
 $g = 1.0; $curve = [];
 foreach ($all as $t) { $g *= 1 + $t['pct'] / 100; $curve[] = ['t' => $t['closed'], 'g' => round(($g - 1) * 100, 2)]; }
 $cf = dirname(__DIR__) . '/data/curve.json';
-file_put_contents($cf . '.tmp', json_encode(['updated' => gmdate('Y-m-d\TH:i\Z'), 'points' => $curve], JSON_UNESCAPED_SLASHES));
+file_put_contents($cf . '.tmp', json_encode(['updated' => gmdate('Y-m-d\TH:i\Z'), 'actions' => $actions, 'balance' => $acc ? (float) ($acc['balance'] ?? 0) : null, 'equity' => $acc ? (float) ($acc['equity'] ?? 0) : null, 'points' => $curve], JSON_UNESCAPED_SLASHES));
 rename($cf . '.tmp', $cf);
 echo 'ok: curve ' . count($curve) . " points\n";
 
