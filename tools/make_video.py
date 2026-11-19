@@ -297,7 +297,7 @@ def kind_howto():
     """How to start copying, 5 steps, with the guide illustrations from site/start/img."""
     label = 'ctrader'; imgdir = os.path.join(os.path.dirname(HERE), 'site', 'start', 'img')
     S = [('Open a Fusion Markets', 'account on cTrader.', 'account.png'), ('Verify your', 'identity.', 'verify.png'),
-         ('Fund it with', 'US$500 or more.', 'fund.png'), ('Find Wendling FX and', 'press Start copying.', 'copyform.png'), ('Set your', 'loss limit.', 'stoploss.png')]
+         ('Fund it with', 'US$500 or more.', 'fund.png'), ('Find WFX and', 'press Start copying.', 'copyform.png'), ('Set your', 'loss limit.', 'stoploss.png')]
     cache = {}
     def pic(name):
         if name not in cache:
