@@ -1,12 +1,25 @@
 #!/usr/bin/env python3
 """Wendling FX: makes today's result cards and queues them for Telegram (telegram.json) and TikTok (queue.json).
 Run from the repo root at about 00:30 UTC: python3 tools/publish_cards.py [--dry]
-Then commit media/cards/, telegram.json and queue.json and push to main. Prints what it queued.
+Then commit media/ (cards and card videos), telegram.json and queue.json and push to main. Prints what it queued.
 """
-import json, os, subprocess, sys, datetime as dt
+import json, os, random, subprocess, sys, datetime as dt
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CARDS = os.path.join(ROOT, 'media', 'cards')
+MUSIC = os.path.join(ROOT, 'tools', 'music')
+
+def card_video(png, mp4, seed):
+    """TikTok gets the card as an 8 s video with a slow push-in and music (photo posts via Buffer go out silent).
+    Frame 0 is the card itself, so the cover is the card."""
+    tracks = sorted(f for f in os.listdir(MUSIC) if f.endswith('.m4a'))
+    music = os.path.join(MUSIC, random.Random(seed).choice(tracks)); tmp = mp4 + '.tmp.mp4'
+    vf = ("scale=2160:3840,zoompan=z='1+0.0002*on':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=240:s=1080x1920:fps=30,format=yuv420p")
+    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-loop', '1', '-framerate', '30', '-i', png, '-i', music, '-filter_complex', f'[0:v]{vf}[v]',
+                    '-map', '[v]', '-map', '1:a', '-t', '8', '-c:v', 'libx264', '-crf', '18', '-preset', 'veryfast', '-pix_fmt', 'yuv420p',
+                    '-af', 'afade=t=out:st=6.3:d=1.7', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', tmp], check=True)
+    os.replace(tmp, mp4)
+
 TAGS = {'day': '#forex #trading #dailyclose', 'week': '#forex #trading #copytrading', 'month': '#forex #trading #copytrading'}
 
 def jload(p):
@@ -31,7 +44,9 @@ def main():
         if cid not in have_tg:
             tg.append({'id': cid, 'due': tg_due, 'type': 'photo', 'file': path, 'caption': r['caption']})
         if cid not in have_q:
-            q.append({'id': cid, 'images': [path], 'due': tt_due, 'text': r['caption'].split('\n')[0] + ' Verified on Myfxbook. ' + TAGS[r['kind']]})
+            vid = r['file'].replace('.png', '.mp4')
+            if not dry: card_video(os.path.join(CARDS, r['file']), os.path.join(ROOT, 'media', vid), r['period'])
+            q.append({'id': cid, 'file': vid, 'noTelegram': True, 'due': tt_due, 'text': r['caption'].split('\n')[0] + ' Verified on Myfxbook. ' + TAGS[r['kind']]})
         done.append({'queued': cid, 'telegram': tg_due, 'tiktok': tt_due})
     if not dry:
         json.dump(tg, open(tgp, 'w'), indent=2, ensure_ascii=False)

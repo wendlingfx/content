@@ -126,7 +126,7 @@ $vq = $fetchJson('queue.json');
 $replaced = [];
 foreach ($vq as $v) if (!empty($v['replaces'])) $replaced[$v['replaces']] = true;
 foreach ($vq as $v) {
-    if (empty($v['id']) || empty($v['file']) || isset($replaced[$v['id']])) continue;
+    if (empty($v['id']) || empty($v['file']) || !empty($v['noTelegram']) || isset($replaced[$v['id']])) continue;
     $cap = trim(preg_replace('/\s*#\w+/u', '', (string) ($v['text'] ?? '')));
     $todo[] = ['id' => 'tt:' . $v['id'], 'due' => $v['due'] ?? '', 'type' => 'video', 'local' => dirname(__DIR__) . '/media/' . basename($v['file']),
                'file' => 'media/' . basename($v['file']), 'caption' => $cap . "\n\nFull record: wendlingfx.com"];
