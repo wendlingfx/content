@@ -164,6 +164,44 @@ foreach ($todo as $m) {
     } else { $log[] = $m['id'] . ': ' . ($r['description'] ?? 'error'); }
 }
 
+// ---- Health check (every run): alerts go to Lucas in private through the bot, only when something changes ----
+// Alert chat id in private/telegram-alert.json {"chat": 123}. Problems are kept in private/health-state.json.
+$alertCfg = jread(__DIR__ . '/telegram-alert.json'); $alertChat = $alertCfg['chat'] ?? null;
+if ($alertChat) {
+    $age = function (string $f, string $k = 'updated') use ($dataDir) { $d = jread($dataDir . $f); return isset($d[$k]) ? time() - strtotime($d[$k]) : 1e9; };
+    $prob = [];
+    $wd = (int) gmdate('N'); $mktOpen = !($wd === 6 || ($wd === 7 && (int) gmdate('G') < 22) || ($wd === 5 && (int) gmdate('G') >= 22));
+    if ($age('stats.json') > 3 * 3600) $prob['stats'] = 'Números do site (Myfxbook) sem atualizar há mais de 3 h';
+    $lv = jread($dataDir . 'live.json');
+    if (empty($lv['ok'])) $prob['live'] = 'cTrader desconectado: ' . substr((string) ($lv['error'] ?? '?'), 0, 80);
+    elseif ($age('live.json') > 15 * 60) $prob['live'] = 'Leitura ao vivo do cTrader parada há mais de 15 min';
+    if ($age('market.json') > 3 * 3600) $prob['market'] = 'Dados de mercado (market.json) sem atualizar há mais de 3 h';
+    if ($age('sync-status.json', 'checked') > 3 * 3600) $prob['sync'] = 'Atualização automática pelo GitHub não roda há mais de 3 h';
+    $ps = jread($dataDir . 'post-status.json');
+    if (time() - strtotime($ps['checked'] ?? '2000-01-01') > 3 * 3600) $prob['buffer'] = 'Envio ao TikTok (Buffer) não roda há mais de 3 h';
+    foreach (($ps['state'] ?? []) as $id => $st) if (($st['status'] ?? '') === 'error') $prob['buffer-' . $id] = "TikTok recusou o post $id: " . substr((string) ($st['error'] ?? ''), 0, 80);
+    foreach ($todo as $m) {
+        $due = strtotime($m['due'] ?? '') ?: 0;
+        if ($due && $due < time() - 2 * 3600 && $due > time() - 3 * 86400 && !isset($state['media'][$m['id']])) $prob['tg-' . $m['id']] = 'Post do Telegram atrasado: ' . $m['id'];
+    }
+    foreach ($log as $l) if (strpos($l, 'error') !== false || strpos($l, 'not found') !== false) $prob['tglog-' . md5($l)] = 'Telegram: ' . $l;
+    $hs = jread(__DIR__ . '/health-state.json') + ['open' => []];
+    $new = array_diff_key($prob, $hs['open']); $gone = array_diff_key($hs['open'], $prob);
+    $msg = [];
+    foreach ($new as $k => $v) $msg[] = "\u{26A0}\u{FE0F} $v";
+    foreach ($gone as $k => $v) $msg[] = "\u{2705} Resolvido: $v";
+    if ($msg) {
+        $ch = curl_init('https://api.telegram.org/bot' . $token . '/sendMessage');
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 20, CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => ['chat_id' => $alertChat, 'text' => "Wendling FX\n\n" . implode("\n", $msg)]]);
+        $ok = json_decode((string) curl_exec($ch), true); curl_close($ch);
+        if (!empty($ok['ok'])) $hs['open'] = $prob;
+    } else { $hs['open'] = $prob; }
+    $hs['checked'] = gmdate('Y-m-d\TH:i\Z');
+    file_put_contents(__DIR__ . '/health-state.json', json_encode($hs, JSON_UNESCAPED_UNICODE));
+    @file_put_contents($dataDir . 'health.json', json_encode(['checked' => $hs['checked'], 'ok' => !$prob, 'problems' => count($prob)]));
+}
+
 $state['posted'] = array_slice(array_values(array_unique($state['posted'])), -500);
 file_put_contents($stateFile, json_encode($state, JSON_UNESCAPED_SLASHES));
 pub($pubFile, ['ok' => true, 'log' => $log]);
