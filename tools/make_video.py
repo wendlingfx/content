@@ -293,7 +293,39 @@ def kind_promo():
     text = 'Follow the live account for free on Telegram: daily close, weekly results and short videos. Search Wendling FX or use the link in bio. #forex #trading #copytrading'
     return scenes, text
 
-KINDS = {'diary': kind_diary, 'week': kind_week, 'growth': kind_growth, 'ctrader': kind_ctrader, 'market': kind_market, 'promo': kind_promo}
+def kind_howto():
+    """How to start copying, 5 steps, with the guide illustrations from site/start/img."""
+    label = 'ctrader'; imgdir = os.path.join(os.path.dirname(HERE), 'site', 'start', 'img')
+    S = [('Open a Fusion Markets', 'account on cTrader.', 'account.png'), ('Verify your', 'identity.', 'verify.png'),
+         ('Fund it with', 'US$500 or more.', 'fund.png'), ('Find Wendling FX and', 'press Start copying.', 'copyform.png'), ('Set your', 'loss limit.', 'stoploss.png')]
+    cache = {}
+    def pic(name):
+        if name not in cache:
+            im = Image.open(os.path.join(imgdir, name)).convert('RGB'); im.thumbnail((900, 520)); cache[name] = im
+        return cache[name]
+    def step(k):
+        l1, l2, name = S[k]
+        def fn(t):
+            img = base(); d = ImageDraw.Draw(img); top(d, label)
+            for j in range(5):
+                x = CX + (j - 2) * 60
+                d.rounded_rectangle([x - 20, 300, x + 20, 308], radius=4, fill=LIME if j <= k else LINE)
+            a = ease(t / 0.35); tc(d, 380 + (1 - a) * 30, f'0{k + 1}', unb(70), mix(LIME, a))
+            c = ease((t - 0.2) / 0.4)
+            tc(d, 500 + (1 - c) * 30, l1, fit(d, l1, 70, 820), mix(WHITE, c)); tc(d, 590 + (1 - c) * 30, l2, fit(d, l2, 70, 820), mix(LIME, c))
+            b = ease((t - 0.5) / 0.45)
+            if b > 0:
+                im = pic(name); x0 = int(CX - im.width / 2); y0 = int(760 + (1 - b) * 40)
+                img.paste(Image.blend(Image.new('RGB', im.size, BG), im, b), (x0, y0))
+            return fade(img, t, 0.15)
+        return fn
+    scenes = [(hook([('Copy my trades', WHITE), ('in 5 steps.', LIME)], label, 'Your money stays in your name.'), 3.0)]
+    scenes += [(step(k), 3.0) for k in range(5)]
+    scenes += [(end_card('Step by step: wendlingfx.com/start'), 3.4)]
+    text = 'How to copy my trades in 5 steps on cTrader Copy: open the account, verify, fund, start copying and set your loss limit. Full guide with screenshots at wendlingfx.com/start. #copytrading #ctrader #forex'
+    return scenes, text
+
+KINDS = {'diary': kind_diary, 'week': kind_week, 'growth': kind_growth, 'ctrader': kind_ctrader, 'market': kind_market, 'promo': kind_promo, 'howto': kind_howto}
 OPT = {}
 
 def render(scenes, out_mp4, music):

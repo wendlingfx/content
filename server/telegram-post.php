@@ -164,6 +164,16 @@ foreach ($todo as $m) {
     } else { $log[] = $m['id'] . ': ' . ($r['description'] ?? 'error'); }
 }
 
+// Weekly reminder of the start guide: Wednesday from 15:00 UTC, once per ISO week, rotating texts.
+$wk = gmdate('o-\WW');
+if ((int) gmdate('N') === 3 && (int) gmdate('G') >= 15 && ($state['startPromo'] ?? '') !== $wk) {
+    $texts = ["How to start copying, step by step\n\nNo cTrader yet, cTrader with Copy, or a broker without Copy: pick your case and follow the screenshots.\n\nhttps://wendlingfx.com/start/",
+              "Thinking about copying the account?\n\nThe whole setup is 5 to 7 steps, with screenshots for each one. Your money stays in an account in your name.\n\nhttps://wendlingfx.com/start/",
+              "Copy the live account on cTrader Copy\n\nMinimum US$500. 30% fee on new profit only. Stop anytime.\n\nStep by step: https://wendlingfx.com/start/"];
+    $r = tg($token, $chat, $texts[((int) gmdate('W')) % 3]);
+    if (!empty($r['ok'])) { $state['startPromo'] = $wk; $log[] = 'start guide reminder sent'; }
+}
+
 // ---- Health check (every run): alerts go to Lucas in private through the bot, only when something changes ----
 // Alert chat id in private/telegram-alert.json {"chat": 123}. Problems are kept in private/health-state.json.
 $alertCfg = jread(__DIR__ . '/telegram-alert.json'); $alertChat = $alertCfg['chat'] ?? null;
