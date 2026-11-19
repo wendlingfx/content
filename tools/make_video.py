@@ -76,10 +76,10 @@ def hook(lines, label, sub=None):
     def fn(t):
         img = base(); d = ImageDraw.Draw(img); top(d, label, ease(t / 0.4))
         for i, (s, c) in enumerate(lines):
-            a = ease((t - 0.15 - i * 0.3) / 0.45)
+            a = ease((t - 0.05 - i * 0.18) / 0.3)  # all lines in place by 0.9 s: Buffer takes the cover at 1 s
             tc(d, 700 + i * 130 + (1 - a) * 50, s, fit(d, s, 92), mix(c, a))
         if sub:
-            b = ease((t - 1.3) / 0.45)
+            b = ease((t - 0.55) / 0.3)
             tc(d, 700 + len(lines) * 130 + 40 + (1 - b) * 20, sub, inter(40, 'Medium'), mix(MUTED, b))
         return fade(img, t)
     return fn
