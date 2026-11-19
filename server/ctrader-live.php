@@ -145,9 +145,9 @@ if (!is_file($mf) || time() - filemtime($mf) > 3300) {
     foreach (($l['symbol'] ?? []) as $x) if (in_array($x['symbolName'] ?? '', $want, true)) $ids[$x['symbolName']] = (int) $x['symbolId'];
     $mk = [];
     foreach ($ids as $name => $sid) {
-        $q = call($s, 2137, ['ctidTraderAccountId' => $accId, 'symbolId' => $sid, 'period' => 12, 'fromTimestamp' => (time() - 40 * 86400) * 1000, 'toTimestamp' => time() * 1000], 2138);
+        $q = call($s, 2137, ['ctidTraderAccountId' => $accId, 'symbolId' => $sid, 'period' => 12, 'fromTimestamp' => (time() - 40 * 86400) * 1000, 'toTimestamp' => (time() + 86400) * 1000], 2138);
         $bars = [];
-        foreach (($q['trendbar'] ?? []) as $b) { $lo = (int) ($b['low'] ?? 0); $bars[] = ['d' => gmdate('Y-m-d', (int) $b['utcTimestampInMinutes'] * 60), 'o' => ($lo + (int) ($b['deltaOpen'] ?? 0)) / 1e5, 'h' => ($lo + (int) ($b['deltaHigh'] ?? 0)) / 1e5, 'l' => $lo / 1e5, 'c' => ($lo + (int) ($b['deltaClose'] ?? 0)) / 1e5]; }
+        foreach (($q['trendbar'] ?? []) as $b) { $lo = (int) ($b['low'] ?? 0); $bars[] = ['d' => gmdate('Y-m-d', (int) $b['utcTimestampInMinutes'] * 60 + 7200), 'o' => ($lo + (int) ($b['deltaOpen'] ?? 0)) / 1e5, 'h' => ($lo + (int) ($b['deltaHigh'] ?? 0)) / 1e5, 'l' => $lo / 1e5, 'c' => ($lo + (int) ($b['deltaClose'] ?? 0)) / 1e5]; }
         if ($bars) $mk[$name] = array_slice($bars, -30);
     }
     if ($mk) { file_put_contents($mf . '.tmp', json_encode(['updated' => gmdate('Y-m-d\TH:i\Z'), 'daily' => $mk])); rename($mf . '.tmp', $mf); }
