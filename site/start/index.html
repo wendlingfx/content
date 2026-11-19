@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>How to start copying · Wendling FX</title>
-<meta name="description" content="Step by step: copy the Wendling FX strategy on cTrader Copy, with or without a cTrader account.">
-<link rel="canonical" href="https://wendlingfx.com/start/">
-<meta property="og:title" content="How to start copying"><meta property="og:description" content="Step by step: copy the Wendling FX strategy on cTrader Copy, with or without a cTrader account."><meta property="og:type" content="article">
+<meta name="description" content="Copy the Wendling FX strategy on cTrader Copy: pick your situation and follow the steps.">
+<link rel="canonical" href="https://wendlingfx.com/start">
+<meta property="og:title" content="How to start copying"><meta property="og:description" content="Copy the Wendling FX strategy on cTrader Copy: pick your situation and follow the steps."><meta property="og:type" content="article">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Unbounded:wght@500;700;800&display=swap">
@@ -29,64 +29,30 @@ img.cover{width:100%;height:auto;border-radius:14px;border:1px solid var(--line)
 footer{border-top:1px solid var(--line);margin-top:56px;padding:24px 0 40px;color:var(--muted);font-size:13px}
 </style>
 <style>
-.paths{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:28px 0}
-.paths a{display:block;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;color:var(--text)}
-.paths a:hover{text-decoration:none;border-color:#C6FF3D}.paths b{display:block;font-family:Unbounded,sans-serif;font-size:16px;margin-bottom:6px}.paths span{color:var(--muted);font-size:15px}
-ol.steps{counter-reset:s;list-style:none;padding:0}ol.steps>li{counter-increment:s;position:relative;padding:0 0 18px 52px}
-ol.steps>li:before{content:counter(s);position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;background:#C6FF3D;color:#0A0A0A;font-weight:700;display:grid;place-items:center;font-size:16px}
-.note{background:var(--panel);border:1px solid var(--line);border-left:3px solid #C6FF3D;border-radius:0;padding:14px 16px;margin:18px 0;font-size:16px}
-.cta{display:inline-block;background:#C6FF3D;color:#0A0A0A;border-radius:999px;padding:12px 22px;font-weight:600;margin:6px 8px 6px 0}.cta:hover{text-decoration:none}
-@media (max-width:700px){.paths{grid-template-columns:1fr}}
+.paths{display:grid;gap:14px;margin:28px 0}
+.paths a{display:flex;gap:18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;color:var(--text)}
+.paths a:hover{text-decoration:none;border-color:#C6FF3D}.paths .n{flex:none;width:52px;height:52px;border-radius:50%;background:#C6FF3D;color:#0A0A0A;font-family:Unbounded,sans-serif;font-weight:700;display:grid;place-items:center;font-size:22px}
+.paths b{display:block;font-family:Unbounded,sans-serif;font-size:19px;margin-bottom:4px}.paths span{color:var(--muted);font-size:16px}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;margin:22px 0}
+.step .h{display:flex;gap:14px;align-items:center}.step .k{flex:none;width:40px;height:40px;border-radius:50%;background:#C6FF3D;color:#0A0A0A;font-weight:700;display:grid;place-items:center;font-size:18px}
+.step h2{margin:0;font-size:20px}.step p{margin:12px 0 0;color:#ddd}.step img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line);margin-top:16px}
+.cta{display:inline-block;background:#C6FF3D;color:#0A0A0A;border-radius:999px;padding:12px 22px;font-weight:600;margin-top:16px}.cta:hover{text-decoration:none}
+.note{border-left:3px solid #C6FF3D;padding:4px 0 4px 16px;margin:24px 0;color:#ccc;font-size:16px}
+.back{display:inline-block;margin-top:28px;font-size:15px}
+.prog{color:var(--muted);font-size:15px;margin-top:-6px}
 </style></head>
 <body>
 <header><div class="wrap nav"><a class="brand" href="/">wendling<b>fx</b></a><a class="l" href="/blog/">Blog</a></div></header>
 <main class="wrap">
 
 <h1>How to start copying</h1>
-<p class="dek">Copying runs inside cTrader Copy, on cTrader's own servers. Your money stays in an account in your name at a regulated broker. Pick your situation:</p>
+<p class="dek">Copying runs inside cTrader Copy. Your money stays in an account in your name at a regulated broker. Which one is you?</p>
 <div class="paths">
-<a href="#new"><b>I don't have cTrader</b><span>Open an account at the broker we use, verify and fund it.</span></a>
-<a href="#have"><b>I have cTrader with Copy</b><span>Your broker already offers cTrader Copy.</span></a>
-<a href="#nocopy"><b>My broker has cTrader, no Copy</b><span>Some brokers offer cTrader without the Copy feature.</span></a>
+<a href="/start/new/"><div class="n">1</div><div><b>I don't have cTrader</b><span>7 steps. Open an account, verify, fund and copy.</span></div></a>
+<a href="/start/have-copy/"><div class="n">2</div><div><b>I have cTrader with Copy</b><span>5 steps. Your broker already offers cTrader Copy.</span></div></a>
+<a href="/start/no-copy/"><div class="n">3</div><div><b>My broker has cTrader, no Copy</b><span>7 steps. Add a Fusion account to the same login.</span></div></a>
 </div>
-
-<h2 id="new">1. You don't have cTrader yet</h2>
-<ol class="steps">
-<li><b>Open an account at Fusion Markets.</b> Choose the <b>Zero</b> account, platform <b>cTrader</b>, currency <b>USD</b>. Fusion is the broker we trade with; it supports cTrader Copy and adds no extra fee to use it.<br><a class="cta" href="https://hub.fusionmarkets.com/en/auth/sign-up?refcode=113969">Open a Fusion account</a></li>
-<li><b>Verify your identity</b> in the Fusion Client Hub: a photo of your ID and a proof of address. This is required by the regulator.</li>
-<li><b>Fund the account.</b> The minimum to copy this strategy is US$500. Fusion has no minimum deposit and no deposit fees on cards, PayPal, Skrill and Neteller.</li>
-<li><b>Log in to cTrader</b> with the cTrader ID created with your account (web, desktop or the mobile app).</li>
-<li><b>Open the strategy and press Start copying.</b> Choose your live account, type the amount to allocate, review the fees and confirm.<br><a class="cta" href="https://app.fusionmarkets.com/copy/strategy/124877">Open the Wendling FX strategy</a></li>
-<li><b>Set your loss limit.</b> In the strategy menu, choose <b>Set equity stop loss</b> and pick the lowest amount you accept for that copy account. If equity reaches it, copying stops and the copied positions are closed.</li>
-</ol>
-
-<h2 id="have">2. You already have cTrader with a broker that offers Copy</h2>
-<ol class="steps">
-<li><b>Check your account type.</b> Copying needs a <b>live hedging</b> account. If yours is netting, create a new hedging account with your broker under the same cTrader ID.</li>
-<li><b>Open Copy</b> in the left menu of cTrader and search for <b>Wendling FX</b>, or use the link below while logged in.<br><a class="cta" href="https://app.fusionmarkets.com/copy/strategy/124877">Open the Wendling FX strategy</a></li>
-<li><b>If the strategy appears</b>, press <b>Start copying</b>, pick the account, allocate at least US$500, review the fees and confirm. Then set your <b>equity stop loss</b> (step 6 above).</li>
-<li><b>If it does not appear</b>, your broker does not list this strategy. Follow path 3 below.</li>
-</ol>
-
-<h2 id="nocopy">3. Your broker has cTrader but not cTrader Copy</h2>
-<p>Not every broker turns on the Copy feature. You can keep your current account and add a Fusion account to the same cTrader ID:</p>
-<ol class="steps">
-<li><b>Open a Fusion Markets Zero account</b> with platform cTrader, using the same email as your cTrader ID, so the new account can be linked to the same login.<br><a class="cta" href="https://hub.fusionmarkets.com/en/auth/sign-up?refcode=113969">Open a Fusion account</a></li>
-<li><b>Verify and fund it</b> (minimum to copy: US$500).</li>
-<li><b>Follow steps 4 to 6 of path 1.</b></li>
-</ol>
-
-<h2>What happens after you start</h2>
-<p>The amount you allocate moves to a separate copy account in your name, used only for this strategy. Trades are sized in proportion to your equity versus ours, so your results move by about the same percentage as the account on this site.</p>
-<p>If the strategy has positions open when you start, they are opened in your copy account at the current market price. Everything after that is copied as it happens.</p>
-<div class="note">Fees: 30% of new profit only, charged when your copy account reaches a new high. No fee when it doesn't. You can add or remove funds, change the loss limit or stop copying at any time from the strategy menu.</div>
-
-<h2>Common questions</h2>
-<p><b>Do I need to keep my computer on?</b> No. Copying runs on cTrader's servers.</p>
-<p><b>Why did a trade not copy?</b> Usually because the copy account's leverage is lower than ours or its free margin is too small. Using a higher allocation or a higher leverage on the Fusion account avoids it.</p>
-<p><b>Can I copy with a demo account?</b> Demo accounts can only copy free strategies, so a live account is needed here.</p>
-<p><b>Need help?</b> Message us on Telegram and we walk you through it.</p>
-<p><a class="cta" href="https://t.me/wendlingfx">Ask on Telegram</a></p>
+<p class="note">Not sure? If you have never opened cTrader, pick 1. If cTrader shows a Copy item in the left menu, pick 2. If it doesn't, pick 3.</p>
 <div class="tg"><span>Follow the live account for free on Telegram.</span><a class="b" href="https://t.me/wendlingfx">Join on Telegram</a></div></main>
 <footer><div class="wrap">Educational content, not financial advice. Trading on margin is high risk. <a href="/">wendlingfx.com</a></div></footer>
 </body></html>

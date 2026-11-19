@@ -6,5 +6,17 @@
   "server/ctrader-live.php": "private/ctrader-live.php",
   "server/sync.php": "private/sync.php",
   "site/blog/index.html": "blog/index.html",
-  "site/start/index.html": "start/index.html"
+  "site/start/index.html": "start/index.html",
+  "site/start/new/index.html": "start/new/index.html",
+  "site/start/have-copy/index.html": "start/have-copy/index.html",
+  "site/start/no-copy/index.html": "start/no-copy/index.html",
+  "site/start/img/account.png": "start/img/account.png",
+  "site/start/img/copyform.png": "start/img/copyform.png",
+  "site/start/img/fund.png": "start/img/fund.png",
+  "site/start/img/hedging.png": "start/img/hedging.png",
+  "site/start/img/search.png": "start/img/search.png",
+  "site/start/img/signup.png": "start/img/signup.png",
+  "site/start/img/stoploss.png": "start/img/stoploss.png",
+  "site/start/img/strategy.png": "start/img/strategy.png",
+  "site/start/img/verify.png": "start/img/verify.png"
 }
