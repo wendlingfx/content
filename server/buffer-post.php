@@ -102,6 +102,17 @@ foreach ($items as $it) {
     $sched = ($due && $due > time() + 600)
         ? 'mode: customScheduled, dueAt: ' . s(gmdate('Y-m-d\TH:i:s.000\Z', $due))
         : 'mode: addToQueue';
+    // Optional: replace an earlier queued post (e.g. a better cover). Deletes it in Buffer first.
+    if (!empty($item['replaces'])) {
+        $old = $item['replaces'];
+        $oldId = $state[$old]['bufferId'] ?? null;
+        foreach ($queue as $qi) if (($qi['id'] ?? '') === $old && !empty($qi['bufferId'])) $oldId = $qi['bufferId'];
+        if ($oldId && ($state[$old]['status'] ?? '') !== 'replaced') {
+            $d = gql($key, 'mutation { deletePost(input: { id: ' . s($oldId) . ' }) { __typename } }');
+            if (!empty($d['errors']) || !empty($d['_error'])) { $log[] = $item['id'] . ': could not delete ' . $old; continue; }
+            $state[$old] = ['status' => 'replaced', 'by' => $item['id'], 'at' => gmdate('Y-m-d\TH:i\Z')]; $stateChanged = true;
+        }
+    }
     $q = 'mutation { createPost(input: { text: ' . s((string) $item['text']) . ', channelId: ' . s($channelId)
        . ', schedulingType: automatic, ' . $sched
        . ', assets: [{ video: { url: ' . s($mediaBase . rawurlencode($file)) . ', metadata: { thumbnailOffset: 1000 } } }] })'

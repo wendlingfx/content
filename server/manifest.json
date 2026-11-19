@@ -1,0 +1,8 @@
+{
+  "site/index.html": "index.html",
+  "server/update-trades.php": "private/update-trades.php",
+  "server/buffer-post.php": "private/buffer-post.php",
+  "server/telegram-post.php": "private/telegram-post.php",
+  "server/ctrader-live.php": "private/ctrader-live.php",
+  "server/sync.php": "private/sync.php"
+}
