@@ -2,7 +2,7 @@
 """Wendling FX: builds one TikTok video (1080x1920, about 18 to 21 s) from the live data on wendlingfx.com.
 
 Usage: python3 tools/make_video.py KIND OUT_DIR [--music NAME] [--date YYYY-MM-DD]
-KIND: diary | week | growth | ctrader | auto (auto picks by weekday: Mon week, Wed diary, Fri growth)
+KIND: diary | week | growth | ctrader | market (needs --points FILE) | promo | auto (auto picks by weekday: Mon week, Wed diary, Fri growth)
 Writes OUT_DIR/<file>.mp4 and prints one JSON line: {"file", "kind", "text", "music"}.
 Rules kept here on purpose: English, percentages only (never dollar values), real numbers, no promises.
 """
@@ -245,7 +245,56 @@ def kind_ctrader():
     text = 'How copy trading works on cTrader: it runs on their servers, sizes to your account, you set your own loss limit, the fee is only on new profit, and you can stop anytime. #copytrading #ctrader #forex #trading'
     return scenes, text
 
-KINDS = {'diary': kind_diary, 'week': kind_week, 'growth': kind_growth, 'ctrader': kind_ctrader}
+def wrap(d, text, font, maxw):
+    words, lines, cur = text.split(), [], ''
+    for w in words:
+        t = (cur + ' ' + w).strip()
+        if d.textlength(t, font=font) <= maxw: cur = t
+        else: lines.append(cur); cur = w
+    if cur: lines.append(cur)
+    return lines
+
+def kind_market():
+    """The week in markets. Needs --points FILE: {"week": "Nov 16 to 20", "items": [{"name": "Gold", "chg": -2.1, "why": "..."}]} (3 items)."""
+    pts = json.load(open(OPT['--points']))
+    items = pts['items'][:3]; label = 'market'
+    def item(it):
+        def fn(t):
+            img = base(); d = ImageDraw.Draw(img); top(d, label)
+            a = ease(t / 0.35)
+            tc(d, 420 + (1 - a) * 30, it['name'], fit(d, it['name'], 96, 800), mix(WHITE, a))
+            v = float(it['chg']); s = pc(v)
+            b = ease((t - 0.2) / 0.4); tc(d, 560 + (1 - b) * 30, s, fit(d, s, 170, 800), mix(LIME if v >= 0 else RED, b))
+            c = ease((t - 0.6) / 0.45); f = inter(44, 'Medium')
+            for i, ln in enumerate(wrap(d, it['why'], f, 800)[:4]): tc(d, 860 + i * 64 + (1 - c) * 20, ln, f, mix(WHITE, c))
+            tc(d, 1160, 'this week', inter(36, 'Regular'), mix(MUTED, c))
+            return fade(img, t, 0.15)
+        return fn
+    first = items[0]
+    scenes = [(hook([('The week in', WHITE), ('markets:', WHITE), (first['name'] + ' ' + pc(float(first['chg'])), LIME if float(first['chg']) >= 0 else RED)], label, pts.get('week', '')), 3.0)]
+    scenes += [(item(it), 3.6) for it in items]
+    scenes += [(end_card('Full notes on the blog.'), 3.4)]
+    text = f"The week in markets, {pts.get('week', '')}: " + ', '.join(f"{it['name']} {pc(float(it['chg']))}" for it in items) + '. Full notes at wendlingfx.com/blog. #forex #gold #markets #trading'
+    return scenes, text
+
+def kind_promo():
+    label = 'promo'
+    lines = [('The live account,', WHITE), ('every day,', WHITE), ('free on Telegram.', LIME)]
+    def card(t):
+        img = base(); d = ImageDraw.Draw(img); top(d, label)
+        a = ease(t / 0.4)
+        tc(d, 560, 'Daily close of the live account', inter(46, 'Medium'), mix(WHITE, a))
+        tc(d, 640, 'Weekly results and short videos', inter(46, 'Medium'), mix(WHITE, a))
+        b = ease((t - 0.6) / 0.5)
+        tc(d, 860, 't.me/wendlingfx', fit(d, 't.me/wendlingfx', 96, 800), mix((42, 171, 238), b))
+        tc(d, 1000, 'Link in bio', inter(40, 'Medium'), mix(MUTED, b))
+        return fade(img, t, 0.15)
+    scenes = [(hook(lines, label, 'Search: Wendling FX'), 3.0), (card, 4.2), (end_card('Free channel. Leave anytime.'), 3.2)]
+    text = 'Follow the live account for free on Telegram: daily close, weekly results and short videos. Search Wendling FX or use the link in bio. #forex #trading #copytrading'
+    return scenes, text
+
+KINDS = {'diary': kind_diary, 'week': kind_week, 'growth': kind_growth, 'ctrader': kind_ctrader, 'market': kind_market, 'promo': kind_promo}
+OPT = {}
 
 def render(scenes, out_mp4, music):
     tmpdir = out_mp4 + '.parts'; os.makedirs(tmpdir, exist_ok=True); parts = []
@@ -273,7 +322,7 @@ def main():
     args = sys.argv[1:]
     if len(args) < 2: raise SystemExit(__doc__)
     kind, out = args[0], args[1]
-    opt = dict(zip(args[2::2], args[3::2]))
+    opt = dict(zip(args[2::2], args[3::2])); OPT.update(opt)
     day = dt.date.fromisoformat(opt['--date']) if '--date' in opt else dt.date.today()
     if kind == 'auto': kind = {0: 'week', 2: 'diary', 4: 'growth'}.get(day.weekday(), 'diary')
     scenes, text = KINDS[kind]()
