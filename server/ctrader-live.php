@@ -20,6 +20,9 @@ foreach (['client_id', 'client_secret', 'access_token'] as $k)
     if (trim((string) ($cfg[$k] ?? '')) === '') $missing[] = $k;
 
 $tok = is_file($tokFile) ? (json_decode((string) file_get_contents($tokFile), true) ?: []) : [];
+// A new token pasted into ctrader.php wins over the refreshed copy kept in ctrader-tokens.json.
+$cfgHash = sha1(trim((string) ($cfg['access_token'] ?? '')));
+if (($tok['cfg'] ?? '') !== $cfgHash) $tok = [];
 $access  = $tok['access_token']  ?? trim($cfg['access_token']);
 $refresh = $tok['refresh_token'] ?? trim((string) ($cfg['refresh_token'] ?? ''));
 
@@ -127,7 +130,7 @@ if (isset($r['_error']) && $refresh !== '') {
 }
 if (isset($r['_error'])) fail($outFile, 'account auth: ' . $r['_error']);
 
-file_put_contents($tokFile, json_encode(['access_token' => $access, 'refresh_token' => $refresh, 'account_id' => $accId, 'login' => $login ?: $want]));
+file_put_contents($tokFile, json_encode(['access_token' => $access, 'refresh_token' => $refresh, 'account_id' => $accId, 'login' => $login ?: $want, 'cfg' => $cfgHash]));
 if ($switched) { // new account: forget the running posts and symbol ids of the old one
     foreach (['running-posts.json', 'ctrader-symbols.json'] as $f) if (is_file(__DIR__ . '/' . $f)) @rename(__DIR__ . '/' . $f, __DIR__ . '/' . $f . '.old');
 }
