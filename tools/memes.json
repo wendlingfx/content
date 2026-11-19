@@ -1,0 +1,14 @@
+[
+ {"id": "m01", "kind": "chart", "chart": "flat", "setup": "Me: I'll just check the chart for five minutes.", "punch": "The chart, three hours later:"},
+ {"id": "m02", "kind": "vs", "l": ["Weekend me", "Clear plan. Levels marked. Coffee ready."], "r": ["Monday 00:01", "The market had other plans."]},
+ {"id": "m03", "kind": "text", "setup": "Trade sitting at +0.1% for three hours.", "punch": "Me, refusing to close it: \"It's a long-term investment now.\""},
+ {"id": "m04", "kind": "chart", "chart": "spike", "setup": "Nobody:", "punch": "Gold at 8:30 AM New York time:"},
+ {"id": "m05", "kind": "text", "setup": "Friends: \"So what do you do for fun?\"", "punch": "Me: \"I watch green and red rectangles.\""},
+ {"id": "m06", "kind": "chart", "chart": "chop", "setup": "Headline: \"Markets calm ahead of the data.\"", "punch": "The data:"},
+ {"id": "m07", "kind": "text", "setup": "Screen time this week: 9 hours a day.", "punch": "Most used app: refreshing EUR/USD."},
+ {"id": "m08", "kind": "vs", "l": ["Manual trading", "Charts at 3 AM. Coffee number four."], "r": ["Copy trading", "Same trades. You slept."]},
+ {"id": "m09", "kind": "text", "setup": "Saturday. Market closed.", "punch": "Me: opens the chart anyway, just to be sure it's still closed."},
+ {"id": "m10", "kind": "chart", "chart": "up", "setup": "Me explaining my trade after it worked:", "punch": "\"Obviously. It was all in the plan.\""},
+ {"id": "m11", "kind": "vs", "l": ["What I tell people", "\"I'm in finance.\""], "r": ["What I actually do", "Stare at gold and talk to it."]},
+ {"id": "m12", "kind": "text", "setup": "Stop loss is like a seatbelt.", "punch": "Boring right up to the day it's the best decision you made."}
+]

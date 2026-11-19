@@ -16,6 +16,7 @@ TYPES = {
     'ctrader': ('LEARN',   'COPY TRADING  /  VIDEO', (42, 171, 238)),
     'market':  ('MARKET',  'THE WEEK  /  VIDEO', (255, 138, 61)),
     'promo':   ('TELEGRAM', 'FREE  /  CHANNEL', (42, 171, 238)),
+    'fun':     ('SUNDAY',  'JUST FOR FUN', (244, 114, 182)),
 }
 
 def _unb(size, w=900):

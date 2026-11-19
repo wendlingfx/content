@@ -4,5 +4,6 @@
   "server/buffer-post.php": "private/buffer-post.php",
   "server/telegram-post.php": "private/telegram-post.php",
   "server/ctrader-live.php": "private/ctrader-live.php",
-  "server/sync.php": "private/sync.php"
+  "server/sync.php": "private/sync.php",
+  "site/blog/index.html": "blog/index.html"
 }
