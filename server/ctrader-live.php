@@ -152,7 +152,7 @@ if (!is_file($mf) || time() - filemtime($mf) > 3300) {
     }
     if ($mk) { file_put_contents($mf . '.tmp', json_encode(['updated' => gmdate('Y-m-d\TH:i\Z'), 'daily' => $mk])); rename($mf . '.tmp', $mf); }
     $h1 = [];
-    foreach (['XAUUSD', 'EURUSD', 'USDCAD'] as $name) {
+    foreach (['XAUUSD', 'EURUSD', 'BTCUSD'] as $name) {
         if (empty($ids[$name])) continue;
         $q = call($s, 2137, ['ctidTraderAccountId' => $accId, 'symbolId' => $ids[$name], 'period' => 9, 'fromTimestamp' => (time() - 16 * 86400) * 1000, 'toTimestamp' => time() * 1000], 2138);
         $bars = [];

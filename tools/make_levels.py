@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Wendling FX: MARKET / LEVELS charts (1080x1920 PNG): 4-hour candles of the last two weeks with last week's high and low,
 yesterday's high and low and this week's open. Data: wendlingfx.com/data/market.json and market-h1.json (from cTrader).
-Usage: python3 tools/make_levels.py OUT_DIR [SYMBOL ...]   (default XAUUSD EURUSD). Prints {"sym", "file", "caption"} per chart.
+Usage: python3 tools/make_levels.py OUT_DIR [SYMBOL ...]   (default XAUUSD EURUSD BTCUSD). Prints {"sym", "file", "caption"} per chart.
 Candles in TradingView's default colours. Levels only, never a buy or sell call."""
 import datetime as dt, json, os, random, sys, urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
@@ -9,10 +9,10 @@ import make_card as mc
 from make_card import unb, inter, W, CX, WHITE, MUTED, LIME, PANEL, LINE, DIM
 from brand import header, TYPES
 UP, DN, ORANGE, GREY = (38, 166, 154), (239, 83, 80), (255, 138, 61), (200, 200, 200)
-NAMES = {'XAUUSD': 'Gold', 'EURUSD': 'EUR/USD', 'USDCAD': 'USD/CAD', 'GBPUSD': 'GBP/USD', 'USDJPY': 'USD/JPY'}
+NAMES = {'BTCUSD': 'Bitcoin', 'XAUUSD': 'Gold', 'EURUSD': 'EUR/USD', 'USDCAD': 'USD/CAD', 'GBPUSD': 'GBP/USD', 'USDJPY': 'USD/JPY'}
 def get(n):
     with urllib.request.urlopen(f'https://wendlingfx.com/data/{n}?t={random.random()}', timeout=30) as r: return json.loads(r.read().decode())
-def fmt(sym, p): return f'{p:,.0f}' if sym in ('XAUUSD',) else (f'{p:.3f}' if sym.endswith('JPY') else f'{p:.4f}')
+def fmt(sym, p): return f'{p:,.0f}' if sym in ('XAUUSD', 'BTCUSD') else (f'{p:.3f}' if sym.endswith('JPY') else f'{p:.4f}')
 def chart(sym, daily, h1, out):
     c4 = {}
     for t, o, h, l, c in h1:
@@ -59,7 +59,7 @@ def chart(sym, daily, h1, out):
     cap = f"{NAMES.get(sym, sym)} this week: last week's range {fmt(sym, L[1][0])} to {fmt(sym, L[0][0])}, week open {fmt(sym, wo[0]['o']) if wo else 'n/a'}."
     return name, cap
 def main():
-    out = sys.argv[1]; syms = sys.argv[2:] or ['XAUUSD', 'EURUSD']; os.makedirs(out, exist_ok=True)
+    out = sys.argv[1]; syms = sys.argv[2:] or ['XAUUSD', 'EURUSD', 'BTCUSD']; os.makedirs(out, exist_ok=True)
     daily = get('market.json')['daily']; h1 = get('market-h1.json')['h1']
     for s in syms:
         if s not in daily or s not in h1: print(json.dumps({'sym': s, 'skipped': 'no data'})); continue
