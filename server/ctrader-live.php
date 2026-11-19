@@ -16,7 +16,7 @@ function out(string $f, array $d): void {
 function fail(string $f, string $why): void { out($f, ['ok' => false, 'error' => $why]); fwrite(STDERR, $why . "\n"); exit(1); }
 
 $missing = [];
-foreach (['client_id', 'client_secret', 'access_token', 'account'] as $k)
+foreach (['client_id', 'client_secret', 'access_token'] as $k)
     if (trim((string) ($cfg[$k] ?? '')) === '') $missing[] = $k;
 
 $tok = is_file($tokFile) ? (json_decode((string) file_get_contents($tokFile), true) ?: []) : [];
@@ -79,9 +79,11 @@ function call($s, int $type, array $payload, int $want): array {
 
 $s = ws_open($host);
 if (!$s) fail($outFile, 'cannot connect to cTrader');
-if ($missing) { // not configured yet: only prove the connection works, then stop
-    $r = call($s, 2100, ['clientId' => 'probe', 'clientSecret' => 'probe'], 2101);
-    fail($outFile, 'config missing: ' . implode(', ', $missing) . ' | probe: ' . ($r['_error'] ?? 'unexpected ok'));
+if ($missing) { // not configured yet: check the app keys if they are there, then stop
+    $hasApp = !in_array('client_id', $missing, true) && !in_array('client_secret', $missing, true);
+    $r = $hasApp ? call($s, 2100, ['clientId' => trim($cfg['client_id']), 'clientSecret' => trim($cfg['client_secret'])], 2101)
+                 : call($s, 2100, ['clientId' => 'probe', 'clientSecret' => 'probe'], 2101);
+    fail($outFile, 'config missing: ' . implode(', ', $missing) . ' | app keys: ' . ($hasApp ? (isset($r['_error']) ? 'REJECTED ' . $r['_error'] : 'OK') : 'not set'));
 }
 
 $r = call($s, 2100, ['clientId' => trim($cfg['client_id']), 'clientSecret' => trim($cfg['client_secret'])], 2101);
@@ -98,9 +100,13 @@ if (!$accId) {
         $r = call($s, 2149, ['accessToken' => $access], 2150);
     }
     if (isset($r['_error'])) fail($outFile, 'account list: ' . $r['_error']);
-    foreach (($r['ctidTraderAccount'] ?? []) as $a)
-        if ((string) ($a['traderLogin'] ?? '') === trim((string) $cfg['account'])) $accId = (int) $a['ctidTraderAccountId'];
-    if (!$accId) fail($outFile, 'account ' . $cfg['account'] . ' not found for this token');
+    $want = trim((string) ($cfg['account'] ?? '')); $live = [];
+    foreach (($r['ctidTraderAccount'] ?? []) as $a) {
+        if (!empty($a['isLive'])) $live[] = (int) $a['ctidTraderAccountId'];
+        if ($want !== '' && (string) ($a['traderLogin'] ?? '') === $want) $accId = (int) $a['ctidTraderAccountId'];
+    }
+    if (!$accId && $want === '' && count($live) === 1) $accId = $live[0]; // account left empty: the only live account
+    if (!$accId) fail($outFile, $want === '' ? count($live) . ' live accounts on this token: fill "account" with the login number' : 'account not found for this token');
 }
 
 $r = call($s, 2102, ['ctidTraderAccountId' => $accId, 'accessToken' => $access], 2103);
