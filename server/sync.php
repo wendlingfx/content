@@ -23,6 +23,7 @@ foreach ($man as $src => $dst) {
     if (is_file($path) && hash_file('sha256', $path) === hash('sha256', $body)) continue;
     if (!is_dir($root . '/private/backup')) mkdir($root . '/private/backup', 0755, true);
     if (is_file($path)) copy($path, $root . '/private/backup/' . str_replace('/', '_', $dst) . '.' . gmdate('YmdHis'));
+    if (!is_dir(dirname($path))) mkdir(dirname($path), 0755, true);
     file_put_contents($path . '.tmp', $body); rename($path . '.tmp', $path);
     $log[] = "$dst updated";
 }

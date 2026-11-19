@@ -137,6 +137,21 @@ if ($open > 0) {
     $ud = (int) ($u['moneyDigits'] ?? $md);
     foreach (($u['positionUnrealizedPnL'] ?? []) as $p) $float += (float) ($p['netUnrealizedPnL'] ?? 0) / (10 ** $ud);
 }
+// Once an hour: daily bars of the main markets for the weekly market notes (public prices only): data/market.json
+$mf = dirname(__DIR__) . '/data/market.json';
+if (!is_file($mf) || time() - filemtime($mf) > 3300) {
+    $want = ['XAUUSD', 'EURUSD', 'GBPUSD', 'USDJPY', 'US30', 'NAS100', 'GER40', 'BTCUSD', 'XTIUSD'];
+    $l = call($s, 2114, ['ctidTraderAccountId' => $accId], 2115); $ids = [];
+    foreach (($l['symbol'] ?? []) as $x) if (in_array($x['symbolName'] ?? '', $want, true)) $ids[$x['symbolName']] = (int) $x['symbolId'];
+    $mk = [];
+    foreach ($ids as $name => $sid) {
+        $q = call($s, 2137, ['ctidTraderAccountId' => $accId, 'symbolId' => $sid, 'period' => 12, 'fromTimestamp' => (time() - 40 * 86400) * 1000, 'toTimestamp' => time() * 1000], 2138);
+        $bars = [];
+        foreach (($q['trendbar'] ?? []) as $b) { $lo = (int) ($b['low'] ?? 0); $bars[] = ['d' => gmdate('Y-m-d', (int) $b['utcTimestampInMinutes'] * 60), 'o' => ($lo + (int) ($b['deltaOpen'] ?? 0)) / 1e5, 'h' => ($lo + (int) ($b['deltaHigh'] ?? 0)) / 1e5, 'l' => $lo / 1e5, 'c' => ($lo + (int) ($b['deltaClose'] ?? 0)) / 1e5]; }
+        if ($bars) $mk[$name] = array_slice($bars, -30);
+    }
+    if ($mk) { file_put_contents($mf . '.tmp', json_encode(['updated' => gmdate('Y-m-d\TH:i\Z'), 'daily' => $mk])); rename($mf . '.tmp', $mf); }
+}
 fclose($s);
 
 out($outFile, ['ok' => true, 'open' => $open, 'floatingPct' => $balance > 0 ? round($float * 100 / $balance, 2) : 0]);
