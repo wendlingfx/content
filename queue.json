@@ -17,5 +17,13 @@
     "replaces": "v02",
     "text": "How copy trading works on cTrader: it runs on their servers, sizes to your account, you set your own loss limit, the fee is only on new profit, and you can stop anytime. #copytrading #ctrader #forex #trading",
     "due": "2026-11-19T22:00:00Z"
+  },
+  {
+    "id": "card-day-2026-11-18",
+    "images": [
+      "media/cards/wendlingfx-day-2026-11-18.png"
+    ],
+    "due": "2026-11-19T12:30:00Z",
+    "text": "Daily close, Nov 18: +65% on the account. 12 trades closed, losses included. Verified on Myfxbook. #forex #trading #dailyclose"
   }
 ]

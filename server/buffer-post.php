@@ -1,5 +1,6 @@
 <?php
 // Wendling FX: sends queued videos to TikTok through the Buffer API.
+// Remote items carry "file" (an mp4 in media/) or "images" (repo paths of PNGs, sent as a photo post).
 // Queues: private/post-queue.json (local, keeps its own status) and queue.json in the
 // GitHub repo wendlingfx/content (remote; status kept in private/post-state.json).
 // Remote videos are copied from the repo's media/ into public_html/media/ before sending.
@@ -79,7 +80,7 @@ $remote = $remoteRaw !== null ? (json_decode($remoteRaw, true) ?: []) : [];
 $items = [];
 foreach ($queue as $i => $item) $items[] = ['src' => 'local', 'i' => $i, 'item' => $item, 'status' => $item['status'] ?? ''];
 foreach ($remote as $item) {
-    if (empty($item['id']) || empty($item['file']) || in_array($item['id'], $localIds, true)) continue;
+    if (empty($item['id']) || (empty($item['file']) && empty($item['images'])) || in_array($item['id'], $localIds, true)) continue;
     $items[] = ['src' => 'remote', 'item' => $item, 'status' => $state[$item['id']]['status'] ?? 'pending'];
 }
 
@@ -88,15 +89,16 @@ $changed = false; $stateChanged = false; $log = [];
 foreach ($items as $it) {
     $item = $it['item'];
     if ($it['status'] !== 'pending') continue;
-    $file = basename((string) $item['file']);
-    if ($it['src'] === 'remote' && !is_file($mediaDir . $file)) {
+    $imgs = (array) ($item['images'] ?? []);
+    $file = basename((string) ($item['file'] ?? ''));
+    if (!$imgs && $it['src'] === 'remote' && !is_file($mediaDir . $file)) {
         $bin = http_get($repoRaw . 'media/' . rawurlencode($file), 300);
         if ($bin === null || strlen($bin) < 50000 || strpos(substr($bin, 0, 16), 'ftyp') === false) { $log[] = $item['id'] . ': video not downloaded'; continue; }
         if (!is_dir($mediaDir)) mkdir($mediaDir, 0755, true);
         file_put_contents($mediaDir . $file . '.tmp', $bin);
         rename($mediaDir . $file . '.tmp', $mediaDir . $file);
     }
-    if (!is_file($mediaDir . $file)) { $log[] = $item['id'] . ': file missing'; continue; }
+    if (!$imgs && !is_file($mediaDir . $file)) { $log[] = $item['id'] . ': file missing'; continue; }
     $due = isset($item['due']) ? strtotime($item['due']) : 0;
     if ($it['src'] === 'remote' && $due && $due > time() + 7 * 86400) { $log[] = $item['id'] . ': later'; continue; }
     $sched = ($due && $due > time() + 600)
@@ -115,7 +117,9 @@ foreach ($items as $it) {
     }
     $q = 'mutation { createPost(input: { text: ' . s((string) $item['text']) . ', channelId: ' . s($channelId)
        . ', schedulingType: automatic, ' . $sched
-       . ', assets: [{ video: { url: ' . s($mediaBase . rawurlencode($file)) . ', metadata: { thumbnailOffset: 1000 } } }] })'
+       . ', assets: [' . ($imgs
+            ? implode(', ', array_map(fn($p) => '{ image: { url: ' . s($repoRaw . $p) . ' } }', $imgs))
+            : '{ video: { url: ' . s($mediaBase . rawurlencode($file)) . ', metadata: { thumbnailOffset: 1000 } } }') . '] })'
        . ' { ... on PostActionSuccess { post { id } } ... on MutationError { message } } }';
     $r = gql($key, $q);
     $res = $r['data']['createPost'] ?? null;
