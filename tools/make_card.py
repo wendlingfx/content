@@ -117,8 +117,7 @@ def summary_rows(tr):
     return rows
 
 def total_line(stats):
-    since = dt.date.fromisoformat(stats['since']).strftime('%b %-d') if stats.get('since') else ''
-    return f"Account since {since}: {pc(float(stats['gain']))}" if since else ''
+    return f"Account total: {pc(float(stats['gain']))}" if stats.get('gain') is not None else ''
 
 def make(kind, date, out_dir, days, trades, stats):
     if kind == 'day':

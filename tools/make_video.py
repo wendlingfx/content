@@ -145,7 +145,7 @@ def kind_week():
         b = ease((t - 0.3) / 0.6)
         big = pc(wk * min(1, b * 1.15) if b < 0.87 else wk, False); tc(d, 430 + (1 - b) * 40, big, fit(d, pc(wk, False), 200, 780), mix(LIME if wk >= 0 else RED, b))
         tc(d, 700, 'on the account', inter(44, 'Medium'), mix(WHITE, b))
-        rows = [('Total since ' + dt.date.fromisoformat(st['since']).strftime('%b %-d'), pc(st['gain'], False)),
+        rows = [('Account total', pc(st['gain'], False)),
                 ('Winning trades, after costs', f"{round(st['winRate'])}%"),
                 ('Best trade', pc(st.get('bestTrade', 0), False)),
                 ('Average losing trade', pc(st.get('avgLoss', 0)))]
@@ -175,7 +175,7 @@ def kind_growth():
     def chart(t):
         img = base(); d = ImageDraw.Draw(img); top(d, label)
         a = ease(t / 0.4)
-        tc(d, 260, 'Since ' + dt.date.fromisoformat(st['since']).strftime('%b %-d, %Y'), inter(44, 'Medium'), mix(MUTED, a))
+        tc(d, 260, 'Live account, verified', inter(44, 'Medium'), mix(MUTED, a))
         k = ease((t - 0.4) / 4.5); n = max(2, int(1 + k * (len(pts) - 1)))
         X0, X1, Y0, Y1 = 90, 920, 520, 1280
         def X(i): return X0 + (X1 - X0) * i / (len(pts) - 1)
@@ -189,9 +189,9 @@ def kind_growth():
         tc(d, 1360, f"{st['trades']} trades, {round(st['winRate'])}% winners after costs", inter(38, 'Medium'), mix(WHITE, b))
         tc(d, 1420, 'One point per closed trade.', inter(34, 'Regular'), mix(MUTED, b))
         return fade(img, t)
-    scenes = [(hook([('Account since', WHITE), (dt.date.fromisoformat(st['since']).strftime('%b %-d') + ':', WHITE), (pc(pts[-1], False), LIME if pts[-1] >= 0 else RED)], label, str(st['trades']) + ' trades, every one public.'), 3.0),
+    scenes = [(hook([('Account growth:', WHITE), (pc(pts[-1], False), LIME if pts[-1] >= 0 else RED), ('every trade public.', WHITE)], label, 'Losses included. Verified on Myfxbook.'), 3.0),
               (chart, 7.0), (end_card('Verified on Myfxbook.'), 3.4)]
-    text = f"Account growth since {dt.date.fromisoformat(st['since']).strftime('%b %-d')}: one point per closed trade, losses included. Verified on Myfxbook. #forex #trading #copytrading"
+    text = f"Account growth: one point per closed trade, losses included. Verified on Myfxbook. #forex #trading #copytrading"
     return scenes, text
 
 SHIELD = [(0, -60), (52, -40), (52, 6), (0, 62), (-52, 6), (-52, -40)]

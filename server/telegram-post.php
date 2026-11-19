@@ -56,7 +56,7 @@ if (empty($state['photoSet'])) {
 if (!$state['seeded']) {
     $msg = "Wendling FX: live account updates.\n\n"
          . "Every trade I close is posted here, in % of the account, losses included. Plus a short result every Sunday.\n\n"
-         . ($total ? "Account so far: $total" . ($since ? " since $since" : '') . ".\n" : '')
+         . ($total ? "Account so far: $total.\n" : '')
          . "Verified record: wendlingfx.com\n\n"
          . "Trading on margin is high risk. Not financial advice.";
     $r = tg($token, $chat, $msg);
@@ -70,7 +70,7 @@ if (!$state['seeded']) {
         $p = (float) $t['pct'];
         $msg = ($p > 0 ? "\u{1F7E2}" : ($p < 0 ? "\u{1F534}" : "\u{26AA}")) . ' ' . $t['symbol'] . ' ' . $t['side'] . " closed\n"
              . pc($p) . " of the account\n"
-             . ($total ? "Total" . ($since ? " since $since" : '') . ": $total" : '');
+             . ($total ? "Account total: $total" : '');
         $r = tg($token, $chat, trim($msg));
         if (empty($r['ok'])) { $log[] = 'error: ' . ($r['description'] ?? '?'); break; }
         $state['posted'][] = $key($t); $sent++;
@@ -87,7 +87,7 @@ if ((int) gmdate('N') === 7 && (int) gmdate('G') >= 20 && $state['lastWeekly'] !
     $g0 = $start ? (float) $start['g'] : 0.0; $g1 = (float) $end['g'];
     $wk = ((1 + $g1 / 100) / (1 + $g0 / 100) - 1) * 100;
     $msg = "Week of " . gmdate('M j', $mon) . ": " . pc($wk) . " on the account.\n"
-         . ($total ? "Total" . ($since ? " since $since" : '') . ": $total\n" : '')
+         . ($total ? "Account total: $total\n" : '')
          . "Full record: wendlingfx.com";
     $r = tg($token, $chat, $msg);
     if (!empty($r['ok'])) { $state['lastWeekly'] = $week; $log[] = 'weekly sent'; } else { $log[] = 'weekly error: ' . ($r['description'] ?? '?'); }
