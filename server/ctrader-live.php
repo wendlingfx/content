@@ -137,6 +137,65 @@ if ($open > 0) {
     $ud = (int) ($u['moneyDigits'] ?? $md);
     foreach (($u['positionUnrealizedPnL'] ?? []) as $p) $float += (float) ($p['netUnrealizedPnL'] ?? 0) / (10 ** $ud);
 }
+
+// Telegram "running" posts: a position open for RUN_MIN minutes with RUN_PCT % of the account or more in profit is posted
+// once (symbol, side and % only: no entry price, stop or target). When it closes, the result is posted as a reply.
+const RUN_MIN = 30; const RUN_PCT = 1.0;
+$tgCfgFile = __DIR__ . '/telegram.php';
+$runFile = __DIR__ . '/running-posts.json';
+if (is_file($tgCfgFile) && $balance > 0) {
+    $tgc = require $tgCfgFile; $tgTok = trim((string) ($tgc['token'] ?? '')); $tgChat = (string) ($tgc['chat'] ?? '@wendlingfx');
+    $run = is_file($runFile) ? (json_decode((string) file_get_contents($runFile), true) ?: []) : [];
+    $symFile = __DIR__ . '/ctrader-symbols.json';
+    $symN = is_file($symFile) ? (json_decode((string) file_get_contents($symFile), true) ?: []) : [];
+    $pnl = [];
+    foreach (($u['positionUnrealizedPnL'] ?? []) as $p) $pnl[(string) $p['positionId']] = (float) ($p['netUnrealizedPnL'] ?? 0) / (10 ** ($ud ?? $md));
+    $nice = ['XAUUSD' => 'Gold', 'XAGUSD' => 'Silver', 'BTCUSD' => 'Bitcoin', 'US30' => 'Dow', 'NAS100' => 'Nasdaq', 'GER40' => 'DAX'];
+    $tgsend = function (array $f) use ($tgTok) {
+        $ch = curl_init('https://api.telegram.org/bot' . $tgTok . '/sendMessage');
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 20, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $f]);
+        $r = json_decode((string) curl_exec($ch), true); curl_close($ch); return is_array($r) ? $r : [];
+    };
+    $seen = [];
+    foreach (($rc['position'] ?? []) as $pos) {
+        $pid = (string) $pos['positionId']; $seen[$pid] = true; $td = $pos['tradeData'] ?? [];
+        if (isset($run[$pid]) || $tgTok === '') continue;
+        $mins = (time() * 1000 - (int) ($td['openTimestamp'] ?? 0)) / 60000;
+        $pct = ($pnl[$pid] ?? 0) * 100 / $balance;
+        if ($mins < RUN_MIN || $pct < RUN_PCT) continue;
+        $sid = (string) ($td['symbolId'] ?? '');
+        if (!isset($symN[$sid])) {
+            $l = call($s, 2114, ['ctidTraderAccountId' => $accId], 2115);
+            foreach (($l['symbol'] ?? []) as $x) $symN[(string) $x['symbolId']] = $x['symbolName'] ?? '';
+            file_put_contents($symFile, json_encode($symN));
+        }
+        $sym = $symN[$sid] ?? 'Trade'; $name = $nice[$sym] ?? $sym;
+        $side = ((int) ($td['tradeSide'] ?? 1)) === 2 ? 'sell' : 'buy';
+        $h = $mins >= 90 ? round($mins / 60, 1) . ' h' : round($mins) . ' min';
+        $txt = "\u{1F7E2} $name $side running: +" . number_format($pct, 1) . "% of the account\nOpen for $h. Live update, not a signal.";
+        $r = $tgsend(['chat_id' => $tgChat, 'text' => $txt]);
+        $run[$pid] = ['msg' => $r['result']['message_id'] ?? null, 'at' => time(), 'name' => $name, 'side' => $side];
+    }
+    // Closed since the last run: post the final result as a reply to the running post.
+    foreach ($run as $pid => $info) {
+        if (isset($seen[$pid]) || !empty($info['closed'])) continue;
+        $dl = call($s, 2133, ['ctidTraderAccountId' => $accId, 'fromTimestamp' => ($info['at'] - 3 * 86400) * 1000, 'toTimestamp' => (time() + 60) * 1000], 2134);
+        $net = 0.0; $after = null; $found = false;
+        foreach (($dl['deal'] ?? []) as $dd) {
+            if ((string) ($dd['positionId'] ?? '') !== (string) $pid || empty($dd['closePositionDetail'])) continue;
+            $cp = $dd['closePositionDetail']; $dg = (int) ($cp['moneyDigits'] ?? $md); $found = true;
+            $net += ((float) ($cp['grossProfit'] ?? 0) + (float) ($cp['swap'] ?? 0) + (float) ($cp['commission'] ?? 0)) / (10 ** $dg);
+            $after = (float) ($cp['balance'] ?? 0) / (10 ** $dg);
+        }
+        if (!$found) { if (time() - $info['at'] > 7 * 86400) $run[$pid]['closed'] = true; continue; }
+        $before = $after !== null ? $after - $net : $balance - $net;
+        $pc = $before > 0 ? $net * 100 / $before : 0;
+        if ($tgTok !== '' && $info['msg']) $tgsend(['chat_id' => $tgChat, 'reply_to_message_id' => $info['msg'], 'text' => ($pc >= 0 ? "\u{2705} " : '') . $info['name'] . ' ' . $info['side'] . ' closed: ' . ($pc >= 0 ? '+' : '') . number_format($pc, 1) . '% of the account']);
+        $run[$pid]['closed'] = true;
+    }
+    foreach ($run as $pid => $info) if (!empty($info['closed']) && time() - $info['at'] > 14 * 86400) unset($run[$pid]);
+    file_put_contents($runFile, json_encode($run));
+}
 // Once an hour: daily bars of the main markets for the weekly market notes (public prices only): data/market.json
 $mf = dirname(__DIR__) . '/data/market.json';
 if (!is_file($mf) || time() - filemtime($mf) > 3300) {
