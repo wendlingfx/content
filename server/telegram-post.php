@@ -80,7 +80,7 @@ if (!$state['seeded']) {
     if (empty($r['ok'])) { pub($pubFile, ['ok' => false, 'error' => $r['description'] ?? 'send failed']); exit(1); }
     foreach ($trades as $t) $state['posted'][] = $key($t);
     $state['seeded'] = true; $log[] = 'welcome sent';
-} else {
+} elseif (false) { // 19/11: one post per trade switched off (the daily close card covers it; it flooded the channel)
     // New closed trades, oldest first, at most 5 per run.
     $new = array_values(array_filter(array_reverse($trades), fn($t) => isset($t['pct']) && !in_array($key($t), $state['posted'], true)));
     foreach (array_slice($new, 0, 5) as $t) {
