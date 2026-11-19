@@ -1,5 +1,5 @@
 {
   "note": "Which trading account the site follows. ctrader_login: cTrader login number read by private/ctrader-live.php. myfxbook_id: Myfxbook account id read by private/update-trades.php. No keys here.",
-  "ctrader_login": "9089271",
+  "ctrader_login": "9089274",
   "myfxbook_id": 12322750
 }
