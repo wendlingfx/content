@@ -1,5 +1,6 @@
 <?php
 // Wendling FX: posts closed trades (in % of the account) and a weekly summary to the Telegram channel.
+// Also mirrors the TikTok videos (queue.json) and sends extra posts from telegram.json in the repo.
 // Reads ../data/closed-trades.json, ../data/stats.json and ../data/performance.json (written by update-trades.php).
 // Config: private/telegram.php returns ['token' => '...', 'chat' => '@wendlingfx'].
 // Run by cron a few minutes after update-trades.php.
@@ -90,6 +91,73 @@ if ((int) gmdate('N') === 7 && (int) gmdate('G') >= 20 && $state['lastWeekly'] !
          . "Full record: wendlingfx.com";
     $r = tg($token, $chat, $msg);
     if (!empty($r['ok'])) { $state['lastWeekly'] = $week; $log[] = 'weekly sent'; } else { $log[] = 'weekly error: ' . ($r['description'] ?? '?'); }
+}
+
+// Media queue: videos from queue.json (same file and time as TikTok) and extra posts from telegram.json.
+// telegram.json items: {id, due (UTC ISO), type: photo|document|video|text, file (repo path, not for text), caption, pin?}
+function tg_file(string $token, string $method, string $field, string $chat, string $path, string $caption): array {
+    $mime = function_exists('mime_content_type') ? (mime_content_type($path) ?: 'application/octet-stream') : 'application/octet-stream';
+    $post = ['chat_id' => $chat, $field => new CURLFile($path, $mime, basename($path)), 'caption' => $caption];
+    if ($field === 'video') $post['supports_streaming'] = 'true';
+    $ch = curl_init('https://api.telegram.org/bot' . $token . '/' . $method);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 120, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $post]);
+    $d = json_decode((string) curl_exec($ch), true); curl_close($ch);
+    return is_array($d) ? $d : ['ok' => false, 'description' => 'no response'];
+}
+function tg_call(string $token, string $method, array $params): array {
+    $ch = curl_init('https://api.telegram.org/bot' . $token . '/' . $method);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 30, CURLOPT_POST => true, CURLOPT_POSTFIELDS => $params]);
+    $d = json_decode((string) curl_exec($ch), true); curl_close($ch);
+    return is_array($d) ? $d : ['ok' => false, 'description' => 'no response'];
+}
+$raw = 'https://raw.githubusercontent.com/wendlingfx/content/main/';
+$fetchJson = function (string $name) use ($raw): array {
+    $j = @file_get_contents($raw . $name . '?t=' . time());
+    $d = $j !== false ? json_decode($j, true) : null;
+    return is_array($d) ? $d : [];
+};
+$state += ['media' => [], 'mediaSeeded' => false];
+$todo = [];
+$vq = $fetchJson('queue.json');
+$replaced = [];
+foreach ($vq as $v) if (!empty($v['replaces'])) $replaced[$v['replaces']] = true;
+foreach ($vq as $v) {
+    if (empty($v['id']) || empty($v['file']) || isset($replaced[$v['id']])) continue;
+    $cap = trim(preg_replace('/\s*#\w+/u', '', (string) ($v['text'] ?? '')));
+    $todo[] = ['id' => 'tt:' . $v['id'], 'due' => $v['due'] ?? '', 'type' => 'video', 'local' => dirname(__DIR__) . '/media/' . basename($v['file']),
+               'file' => 'media/' . basename($v['file']), 'caption' => $cap . "\n\nFull record: wendlingfx.com"];
+}
+foreach ($fetchJson('telegram.json') as $m) if (!empty($m['id'])) $todo[] = $m + ['type' => 'text'];
+// First run of this block: anything already past due is marked as done, so old posts are not dumped at once.
+if (!$state['mediaSeeded']) {
+    foreach ($todo as $m) if (($m['due'] ?? '') !== '' && strtotime($m['due']) < time() - 3600) $state['media'][$m['id']] = 'skipped';
+    $state['mediaSeeded'] = true;
+}
+$mediaSent = 0;
+foreach ($todo as $m) {
+    if (isset($state['media'][$m['id']]) || $mediaSent >= 2) continue;
+    if (($m['due'] ?? '') === '' || strtotime($m['due']) > time()) continue;
+    $type = $m['type'] ?? 'text'; $cap = (string) ($m['caption'] ?? '');
+    if ($type === 'text') {
+        $r = tg($token, $chat, $cap);
+    } else {
+        $path = $m['local'] ?? '';
+        if ($path === '' || !is_file($path)) {
+            $bin = @file_get_contents($raw . $m['file']);
+            if ($bin === false || strlen($bin) < 500) { $log[] = $m['id'] . ': file not found'; continue; }
+            $path = sys_get_temp_dir() . '/wfx-' . basename($m['file']); file_put_contents($path, $bin); $tmp = true;
+        }
+        [$method, $field] = ['photo' => ['sendPhoto', 'photo'], 'document' => ['sendDocument', 'document'], 'video' => ['sendVideo', 'video']][$type] ?? ['sendDocument', 'document'];
+        $r = tg_file($token, $method, $field, $chat, $path, mb_substr($cap, 0, 1024));
+        if (!empty($tmp)) { @unlink($path); $tmp = false; }
+    }
+    if (!empty($r['ok'])) {
+        $state['media'][$m['id']] = 'sent'; $mediaSent++; $log[] = $m['id'] . ': sent';
+        if (!empty($m['pin']) && !empty($r['result']['message_id'])) {
+            $p = tg_call($token, 'pinChatMessage', ['chat_id' => $chat, 'message_id' => $r['result']['message_id'], 'disable_notification' => 'true']);
+            $log[] = $m['id'] . ': ' . (!empty($p['ok']) ? 'pinned' : 'pin failed (' . ($p['description'] ?? '?') . ')');
+        }
+    } else { $log[] = $m['id'] . ': ' . ($r['description'] ?? 'error'); }
 }
 
 $state['posted'] = array_slice(array_values(array_unique($state['posted'])), -500);
