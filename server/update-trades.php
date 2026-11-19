@@ -72,7 +72,8 @@ foreach ($history as $t) {
     $closed = DateTime::createFromFormat('m/d/Y H:i', $t['closeTime'] ?? ($t['openTime'] ?? ''), new DateTimeZone('UTC'));
     if (!$closed) $closed = DateTime::createFromFormat('m/d/Y H:i', $t['openTime'] ?? '', new DateTimeZone('UTC'));
     if (!$closed) continue;
-    $net = (float) ($t['profit'] ?? 0) + (float) ($t['interest'] ?? 0) + (float) ($t['commission'] ?? 0);
+    $gross = (float) ($t['profit'] ?? 0);
+    $net = $gross + (float) ($t['interest'] ?? 0) + (float) ($t['commission'] ?? 0);
     $isTrade = ($action === 'buy' || $action === 'sell');
     $isCash  = !$isTrade && $net != 0.0; // deposits, withdrawals, balance and credit operations
     if (!$isTrade && !$isCash) continue; // pending orders and the like
@@ -83,12 +84,20 @@ foreach ($history as $t) {
         'symbol' => (string) ($t['symbol'] ?? ''),
         'side'   => ucfirst($action),
         'net'    => $net,
+        'gross'  => $gross,
     ];
 }
 usort($events, fn($a, $b) => strcmp($a['closed'], $b['closed']));
 
-// Walk back from today's balance to get the balance before each event, then % of the account.
-$bal = $acc ? (float) ($acc['balance'] ?? 0) : 0.0;
+// Myfxbook's per-trade "profit" may already include interest and commission. Walking back from today's
+// balance must end at about zero before the first deposit: pick the reading that does, so costs are not counted twice.
+$bal0 = $acc ? (float) ($acc['balance'] ?? 0) : 0.0;
+$resid = function (string $f) use ($events, $bal0) { $b = $bal0; foreach ($events as $e) $b -= $e[$f]; return $b; };
+$rNet = $resid('net'); $rGross = $resid('gross');
+$field = abs($rGross) < abs($rNet) ? 'gross' : 'net';
+foreach ($events as $i => $e) $events[$i]['net'] = $e[$field];
+$check = ['mode' => $field, 'residualPct' => $bal0 > 0 ? round(min(abs($rNet), abs($rGross)) * 100 / $bal0, 2) : null];
+$bal = $bal0;
 for ($i = count($events) - 1; $i >= 0; $i--) {
     $before = $bal - $events[$i]['net'];
     $events[$i]['pct'] = ($events[$i]['trade'] && $before > 0) ? round($events[$i]['net'] * 100 / $before, 2) : null;
@@ -151,6 +160,7 @@ if ($acc) {
         'since'        => $first,
         'days'         => $daysRun,
         'perDay'       => round($allCount / $daysRun, 1),
+        'check'        => $check,
     ];
     $sf = dirname(__DIR__) . '/data/stats.json';
     file_put_contents($sf . '.tmp', json_encode($stats));
