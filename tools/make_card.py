@@ -101,8 +101,8 @@ def card(kind, title, big, sub, rows, bars, total, out):
                 vs = pc(v); fv = inter(24); wv = d.textlength(vs, font=fv)
                 d.text((xa + bw / 2 - wv / 2, (base_y - h - 32) if v >= 0 else (base_y + h + 4)), vs, font=fv, fill=col(v))
     tc(d, 1600, total, inter(40, 'SemiBold'), WHITE)
-    f = unb(64); w1 = d.textlength('wendling', font=f); w2 = d.textlength('fx', font=f); xx = CX - (w1 + w2) / 2
-    d.text((xx, 1668), 'wendling', font=f, fill=WHITE); d.text((xx + w1, 1668), 'fx', font=f, fill=LIME)
+    f = unb(84); w1 = d.textlength('w', font=f); w2 = d.textlength('fx', font=f); xx = CX - (w1 + w2) / 2
+    d.text((xx, 1650), 'w', font=f, fill=WHITE); d.text((xx + w1, 1650), 'fx', font=f, fill=LIME)
     tc(d, 1750, 'Verified on Myfxbook  ·  wendlingfx.com', inter(32, 'Medium'), MUTED)
     tc(d, 1810, 'Trading on margin is high risk. Not financial advice.', inter(26, 'Regular'), DIM)
     img.save(out, optimize=True)

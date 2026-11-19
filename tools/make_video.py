@@ -60,10 +60,10 @@ def get(name):
 def end_card(sub):
     def fn(t):
         img = base(); d = ImageDraw.Draw(img)
-        a = ease(t / 0.5); f = unb(110)
-        w1 = d.textlength('wendling', font=f); w2 = d.textlength('fx', font=f)
-        x = CX - (w1 + w2) / 2; y = 720 + (1 - a) * 40
-        d.text((x, y), 'wendling', font=f, fill=mix(WHITE, a)); d.text((x + w1, y), 'fx', font=f, fill=mix(LIME, a))
+        a = ease(t / 0.5); f = unb(170)
+        w1 = d.textlength('w', font=f); w2 = d.textlength('fx', font=f)
+        x = CX - (w1 + w2) / 2; y = 680 + (1 - a) * 40
+        d.text((x, y), 'w', font=f, fill=mix(WHITE, a)); d.text((x + w1, y), 'fx', font=f, fill=mix(LIME, a))
         b = ease((t - 0.5) / 0.45)
         tc(d, 960 + (1 - b) * 20, sub, inter(46, 'SemiBold'), mix(WHITE, b))
         tc(d, 1030 + (1 - b) * 20, 'wendlingfx.com', inter(46, 'SemiBold'), mix(LIME, b))

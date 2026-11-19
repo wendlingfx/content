@@ -52,9 +52,10 @@ def chart(sym, daily, h1, out):
     ty = 1510
     for k, v in [('PWH / PWL', 'last week high and low'), ('PDH / PDL', 'yesterday high and low'), ('Open', 'this week open')]:
         d.text((90, ty), k, font=inter(34, 'SemiBold'), fill=WHITE); d.text((380, ty), v, font=inter(34, 'Regular'), fill=MUTED); ty += 52
-    f = unb(56); w1 = d.textlength('wendling', font=f); w2 = d.textlength('fx', font=f); xx = CX - (w1 + w2) / 2
-    d.text((xx, 1700), 'wendling', font=f, fill=WHITE); d.text((xx + w1, 1700), 'fx', font=f, fill=LIME)
-    mc.tc(d, 1790, 'Levels on the chart, not trade signals.', inter(28, 'Regular'), DIM)
+    f = unb(72); w1 = d.textlength('w', font=f); w2 = d.textlength('fx', font=f); xx = CX - (w1 + w2) / 2
+    d.text((xx, 1668), 'w', font=f, fill=WHITE); d.text((xx + w1, 1668), 'fx', font=f, fill=LIME)
+    mc.tc(d, 1765, 'wendlingfx.com', inter(32, 'Medium'), MUTED)
+    mc.tc(d, 1815, 'Levels on the chart, not trade signals.', inter(28, 'Regular'), DIM)
     name = f'wendlingfx-levels-{sym.lower()}-{today.isoformat()}.png'; img.save(os.path.join(out, name), optimize=True)
     cap = f"{NAMES.get(sym, sym)} this week: last week's range {fmt(sym, L[1][0])} to {fmt(sym, L[0][0])}, week open {fmt(sym, wo[0]['o']) if wo else 'n/a'}."
     return name, cap

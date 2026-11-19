@@ -52,9 +52,9 @@ def make(m, out):
             d.rounded_rectangle([70, yb, W - 150, yb + 480], radius=28, fill=PANEL, outline=PINK if i else LINE, width=3 if i else 2)
             mc.tc(d, yb + 60, t, unb(58, 700), PINK if i else MUTED)
             block(d, yb + 190, b, unb(54, 600), WHITE, maxw=720)
-    f = unb(64); w1 = d.textlength('wendling', font=f); w2 = d.textlength('fx', font=f); xx = CX - (w1 + w2) / 2
-    d.text((xx, 1668), 'wendling', font=f, fill=WHITE); d.text((xx + w1, 1668), 'fx', font=f, fill=LIME)
-    mc.tc(d, 1760, 'Free daily results on Telegram: t.me/wendlingfx', inter(32, 'Medium'), MUTED)
+    f = unb(84); w1 = d.textlength('w', font=f); w2 = d.textlength('fx', font=f); xx = CX - (w1 + w2) / 2
+    d.text((xx, 1640), 'w', font=f, fill=WHITE); d.text((xx + w1, 1640), 'fx', font=f, fill=LIME)
+    mc.tc(d, 1760, 'wendlingfx.com  ·  t.me/wendlingfx', inter(32, 'Medium'), MUTED)
     name = f"wendlingfx-meme-{m['id']}.png"; img.save(os.path.join(out, name), optimize=True)
     return name
 
