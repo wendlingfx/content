@@ -108,7 +108,8 @@ for ($i = count($events) - 1; $i >= 0; $i--) {
 }
 
 // Keep every trade ever seen (Myfxbook only returns the most recent ones).
-$storeFile = __DIR__ . '/trades-store.json';
+// One store per account: after a switch (account.json) the old account's trades stay out of the new stats.
+$storeFile = __DIR__ . ((int) ($ov['myfxbook_id'] ?? 0) > 0 ? '/trades-store-' . (int) $ov['myfxbook_id'] . '.json' : '/trades-store.json');
 $store = is_file($storeFile) ? (json_decode((string) file_get_contents($storeFile), true) ?: []) : [];
 foreach ($events as $e) {
     if (!$e['trade'] || $e['pct'] === null) continue;
