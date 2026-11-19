@@ -4,7 +4,7 @@ import json, os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__))))
 import make_post as mp
 REF = 'https://hub.fusionmarkets.com/en/auth/sign-up?refcode=113969'
-STRAT = 'https://app.fusionmarkets.com/copy/strategy/124941?u=LucasWend'
+STRAT = 'https://app.fusionmarkets.com/copy/strategy/124942?u=LucasWend'
 CSS = '''<style>
 .paths{display:grid;gap:14px;margin:28px 0}
 .paths a{display:flex;gap:18px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;color:var(--text)}
