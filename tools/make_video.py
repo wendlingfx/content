@@ -114,7 +114,8 @@ def kind_diary():
             d.text((x1 - 28 - rw, cy - 26), s, font=fr, fill=mix(RED if neg else (LIME if v > 0 else WHITE), a))
         return fade(img, t)
     dur = max(7.0, 0.5 + len(trades) * 0.55 + 2.2)
-    scenes = [(hook([('Every trade I take', WHITE), ('is public.', LIME)], label, 'Wins and losses.'), 3.0),
+    last = trades[-1]; lv = float(last['pct'])
+    scenes = [(hook([('Last trade:', WHITE), (last['symbol'] + ' ' + pc(lv), RED if lv < 0 else LIME), ('of the account.', WHITE)], label, 'Every trade is public. Losses too.'), 3.0),
               (lst, dur), (end_card('Verified on Myfxbook.'), 3.4)]
     text = 'Live forex account. Latest closed trades in % of the account, losses included. Verified on Myfxbook. #forex #xauusd #eurusd #trading'
     return scenes, text
@@ -159,7 +160,7 @@ def kind_week():
             col = RED if v.startswith('-') else WHITE
             d.text((898 - vw, y + 26), v, font=fv, fill=mix(col, c))
         return fade(img, t)
-    scenes = [(hook([('My forex account', WHITE), ('last week.', LIME)], label, 'Real numbers. Losses included.'), 3.0),
+    scenes = [(hook([('Week of ' + mon.strftime('%b %-d') + ':', WHITE), (pc(wk, False), LIME if wk >= 0 else RED), ('on the account.', WHITE)], label, 'Real numbers. Losses included.'), 3.0),
               (board, 8.5), (end_card('Verified on Myfxbook.'), 3.4)]
     text = f'Weekly scoreboard, {rng}: {pc(wk, False)} on the account. Every trade is public and verified on Myfxbook. #forex #trading #copytrading'
     return scenes, text
@@ -189,7 +190,7 @@ def kind_growth():
         tc(d, 1360, f"{st['trades']} trades, {round(st['winRate'])}% winners after costs", inter(38, 'Medium'), mix(WHITE, b))
         tc(d, 1420, 'One point per closed trade.', inter(34, 'Regular'), mix(MUTED, b))
         return fade(img, t)
-    scenes = [(hook([('Every trade', WHITE), ('since day one.', LIME)], label, 'Drawn from the live account.'), 3.0),
+    scenes = [(hook([('Account since', WHITE), (dt.date.fromisoformat(st['since']).strftime('%b %-d') + ':', WHITE), (pc(pts[-1], False), LIME if pts[-1] >= 0 else RED)], label, str(st['trades']) + ' trades, every one public.'), 3.0),
               (chart, 7.0), (end_card('Verified on Myfxbook.'), 3.4)]
     text = f"Account growth since {dt.date.fromisoformat(st['since']).strftime('%b %-d')}: one point per closed trade, losses included. Verified on Myfxbook. #forex #trading #copytrading"
     return scenes, text
