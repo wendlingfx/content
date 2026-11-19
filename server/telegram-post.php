@@ -78,20 +78,7 @@ if (!$state['seeded']) {
     if ($sent) $log[] = "$sent trades";
 }
 
-// Weekly summary: Sunday from 20:00 UTC, once per ISO week.
-$week = gmdate('o-\WW');
-if ((int) gmdate('N') === 7 && (int) gmdate('G') >= 20 && $state['lastWeekly'] !== $week && count($days) >= 2) {
-    $mon = strtotime('monday this week', time());
-    $start = null; $end = end($days);
-    foreach ($days as $d) if (strtotime($d['d']) < $mon) $start = $d;
-    $g0 = $start ? (float) $start['g'] : 0.0; $g1 = (float) $end['g'];
-    $wk = ((1 + $g1 / 100) / (1 + $g0 / 100) - 1) * 100;
-    $msg = "Week of " . gmdate('M j', $mon) . ": " . pc($wk) . " on the account.\n"
-         . ($total ? "Account total: $total\n" : '')
-         . "Full record: wendlingfx.com";
-    $r = tg($token, $chat, $msg);
-    if (!empty($r['ok'])) { $state['lastWeekly'] = $week; $log[] = 'weekly sent'; } else { $log[] = 'weekly error: ' . ($r['description'] ?? '?'); }
-}
+// Weekly summary: now the Monday weekly video (mirrored from queue.json), no separate text post.
 
 // Media queue: videos from queue.json (same file and time as TikTok) and extra posts from telegram.json.
 // telegram.json items: {id, due (UTC ISO), type: photo|document|video|text, file (repo path, not for text), caption, pin?}

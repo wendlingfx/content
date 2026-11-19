@@ -8,6 +8,7 @@ Rules kept here on purpose: English, percentages only (never dollar values), los
 """
 import json, math, os, random, subprocess, sys, urllib.request, datetime as dt
 from PIL import Image, ImageDraw, ImageFont
+from brand import header
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 W, H, FPS = 1080, 1920, 30
@@ -42,9 +43,8 @@ def fit(d, s, size, maxw=800, w=700):
     while size > 30 and d.textlength(s, font=unb(size, w)) > maxw: size -= 2
     return unb(size, w)
 
-def top(d, label, a=1.0):
-    d.ellipse([90, 128, 106, 144], fill=mix(RED, a))
-    d.text((122, 118), label, font=inter(30, 'Medium'), fill=mix(MUTED, a))
+def top(d, kind, a=1.0):  # inner scenes: compact type header
+    header(d, kind, a, compact=True)
 
 def fade(img, t, dur=0.2):
     return img if t >= dur else Image.blend(Image.new('RGB', (W, H), BG), img, ease(t / dur))
@@ -74,7 +74,7 @@ def end_card(sub):
 
 def hook(lines, label, sub=None):
     def fn(t):
-        img = base(); d = ImageDraw.Draw(img); top(d, label)
+        img = base(); d = ImageDraw.Draw(img); header(d, label)  # cover: full type header
         for i, (s, c) in enumerate(lines):  # fully visible from frame 0: TikTok uses it as the cover
             tc(d, 700 + i * 130, s, fit(d, s, 92), c)
         if sub:
@@ -88,7 +88,7 @@ def kind_diary():
     trades = [t for t in get('closed-trades.json').get('trades', []) if t.get('pct') is not None][:9]
     trades = list(reversed(trades))
     if not trades: raise SystemExit('no trades')
-    label = 'LIVE ACCOUNT  ·  VERIFIED'
+    label = 'diary'
     def lst(t):
         img = base(); d = ImageDraw.Draw(img); top(d, label)
         a0 = ease(t / 0.4)
@@ -136,7 +136,7 @@ def kind_week():
             if dt.date.fromisoformat(x['d']) < mon: g0 = x['g']
         sun = today
     wk = ((1 + g1 / 100) / (1 + g0 / 100) - 1) * 100
-    label = 'WEEKLY SCOREBOARD'
+    label = 'week'
     rng = mon.strftime('%b %-d') + ' to ' + sun.strftime('%b %-d')
     def board(t):
         img = base(); d = ImageDraw.Draw(img); top(d, label)
@@ -170,7 +170,7 @@ def kind_growth():
     pts = [0.0] + [p['g'] for p in cv]
     if st.get('openPct'): pts.append(round(((1 + pts[-1] / 100) * (1 + st['openPct'] / 100) - 1) * 100, 2))  # now, incl. open trades
     if abs(pts[-1] - st['gain']) > 0.15 * max(10.0, abs(st['gain'])): raise SystemExit('curve does not match the account gain')
-    label = 'ACCOUNT GROWTH'
+    label = 'growth'
     lo, hi = min(pts + [0]), max(pts)
     def chart(t):
         img = base(); d = ImageDraw.Draw(img); top(d, label)
@@ -196,7 +196,7 @@ def kind_growth():
 
 SHIELD = [(0, -60), (52, -40), (52, 6), (0, 62), (-52, 6), (-52, -40)]
 def kind_ctrader():
-    label = 'HOW COPY TRADING WORKS'
+    label = 'ctrader'
     def ic_server(d, cx, cy, a):
         for k in range(3):
             y = cy - 90 + k * 64

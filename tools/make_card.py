@@ -6,12 +6,13 @@ KIND: day | week | month | auto
   day   = the UTC day of --date (default: yesterday)
   week  = Mon to Sun week containing --date (default: the week that just ended)
   month = calendar month of --date (default: last month)
-  auto  = run at about 00:30 UTC: yesterday's day card (Mon to Fri), the week on Saturdays, the month on the 1st
+  auto  = run at about 00:30 UTC: yesterday's day card (Mon to Fri) and the month on the 1st (the week is a video, not a card)
 Prints one JSON line per card: {"file", "kind", "caption", "period"}.
 Same rules as the videos: English, % only, losses shown, no promises.
 """
 import json, os, sys, random, urllib.request, datetime as dt
 from PIL import Image, ImageDraw, ImageFont
+from brand import header
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 W, H = 1080, 1920
@@ -63,15 +64,14 @@ def canvas():
     for y in range(0, H, 72): d.line([(0, y), (W, y)], fill=(18, 18, 18))
     return img, d
 
-def card(label, title, big, sub, rows, bars, total, out):
+def card(kind, title, big, sub, rows, bars, total, out):
     img, d = canvas()
-    d.ellipse([90, 128, 106, 144], fill=RED)
-    d.text((122, 118), label, font=inter(30, 'Medium'), fill=MUTED)
-    tc(d, 300, title, fit(d, title, 64, 800), WHITE)
-    s = pc(big); tc(d, 420, s, fit(d, s, 230, 820), col(big))
-    tc(d, 700, sub, inter(42, 'Medium'), MUTED)
+    header(d, kind, fmt='IMAGE')
+    tc(d, 340, title, fit(d, title, 60, 800), WHITE)
+    s = pc(big); tc(d, 440, s, fit(d, s, 210, 820), col(big))
+    tc(d, 690, sub, inter(42, 'Medium'), MUTED)
     # stat rows
-    x0, x1, y = 70, W - 150, 820
+    x0, x1, y = 70, W - 150, 790
     for k, v, c in rows:
         d.rounded_rectangle([x0, y, x1, y + 96], radius=22, fill=PANEL, outline=LINE, width=2)
         d.text((x0 + 32, y + 28), k, font=inter(36, 'Medium'), fill=MUTED)
@@ -81,7 +81,7 @@ def card(label, title, big, sub, rows, bars, total, out):
     # bars
     if bars:
         vals = [v for _, v in bars if v is not None]
-        y0, hgt = 1300, 230
+        y0, hgt = 1270, 230
         hasp, hasn = any(v > 0.04 for v in vals), any(v < -0.04 for v in vals)
         base_y = y0 + hgt if not hasn else (y0 if not hasp else y0 + hgt / 2)
         room = (hgt - 40) if not (hasp and hasn) else (hgt / 2 - 34)
@@ -125,7 +125,7 @@ def make(kind, date, out_dir, days, trades, stats):
         g = period_gain(days, s, e)
         if g is None: return None
         tr = [p for dd, p in trades if dd == s]
-        label = 'DAILY CLOSE  ·  LIVE ACCOUNT'; title = date.strftime('%A, %b %-d')
+        title = date.strftime('%A, %b %-d')
         bars = [(f'#{i + 1}', p) for i, p in enumerate(tr)] if 2 <= len(tr) <= 16 else []
         cap = f"Daily close, {date.strftime('%b %-d')}: {pc(g)} on the account. {len(tr)} trades closed, losses included."
     elif kind == 'week':
@@ -134,7 +134,7 @@ def make(kind, date, out_dir, days, trades, stats):
         g = period_gain(days, s, e)
         if g is None: return None
         tr = [p for dd, p in trades if s <= dd <= e]
-        label = 'WEEKLY CLOSE  ·  LIVE ACCOUNT'; title = 'Week of ' + mon.strftime('%b %-d')
+        title = 'Week of ' + mon.strftime('%b %-d')
         bars = []
         for i in range(5):
             dd = (mon + dt.timedelta(days=i)).isoformat(); v = period_gain(days, dd, dd)
@@ -146,7 +146,7 @@ def make(kind, date, out_dir, days, trades, stats):
         g = period_gain(days, s, e)
         if g is None: return None
         tr = [p for dd, p in trades if s <= dd <= e]
-        label = 'MONTHLY CLOSE  ·  LIVE ACCOUNT'; title = first.strftime('%B %Y')
+        title = first.strftime('%B %Y')
         bars, wk = [], first - dt.timedelta(days=first.weekday())
         while wk <= last:
             a, b = max(wk, first).isoformat(), min(wk + dt.timedelta(days=6), last).isoformat()
@@ -156,7 +156,7 @@ def make(kind, date, out_dir, days, trades, stats):
         cap = f"{first.strftime('%B')}: {pc(g)} on the account. {len(tr)} trades closed, losses included."
     rows = summary_rows(tr)
     name = f'wendlingfx-{kind}-{s}.png'; out = os.path.join(out_dir, name)
-    card(label, title, g, 'on the account, after costs', rows, bars, total_line(stats), out)
+    card(kind, title, g, 'on the account, after costs', rows, bars, total_line(stats), out)
     return {'file': name, 'kind': kind, 'period': s, 'caption': cap + "\n\nVerified record: wendlingfx.com"}
 
 def main():
@@ -171,7 +171,6 @@ def main():
     if kind == 'auto':
         y = today - dt.timedelta(days=1)
         if y.weekday() < 5: jobs.append(('day', y))
-        if today.weekday() == 5: jobs.append(('week', today - dt.timedelta(days=5)))
         if today.day == 1: jobs.append(('month', y))
     elif kind == 'day': jobs.append(('day', date or today - dt.timedelta(days=1)))
     elif kind == 'week': jobs.append(('week', date or today - dt.timedelta(days=7)))
