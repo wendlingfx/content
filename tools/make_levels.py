@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Wendling FX: MARKET / LEVELS charts (1080x1920 PNG): 4-hour candles of the last two weeks with last week's high and low,
 yesterday's high and low and this week's open. Data: wendlingfx.com/data/market.json and market-h1.json (from cTrader).
-Usage: python3 tools/make_levels.py OUT_DIR [SYMBOL ...]   (default XAUUSD EURUSD USDCAD). Prints {"sym", "file", "caption"} per chart.
+Usage: python3 tools/make_levels.py OUT_DIR [SYMBOL ...]   (default XAUUSD EURUSD). Prints {"sym", "file", "caption"} per chart.
 Candles in TradingView's default colours. Levels only, never a buy or sell call."""
 import datetime as dt, json, os, random, sys, urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
@@ -59,7 +59,7 @@ def chart(sym, daily, h1, out):
     cap = f"{NAMES.get(sym, sym)} this week: last week's range {fmt(sym, L[1][0])} to {fmt(sym, L[0][0])}, week open {fmt(sym, wo[0]['o']) if wo else 'n/a'}."
     return name, cap
 def main():
-    out = sys.argv[1]; syms = sys.argv[2:] or ['XAUUSD', 'EURUSD', 'USDCAD']; os.makedirs(out, exist_ok=True)
+    out = sys.argv[1]; syms = sys.argv[2:] or ['XAUUSD', 'EURUSD']; os.makedirs(out, exist_ok=True)
     daily = get('market.json')['daily']; h1 = get('market-h1.json')['h1']
     for s in syms:
         if s not in daily or s not in h1: print(json.dumps({'sym': s, 'skipped': 'no data'})); continue

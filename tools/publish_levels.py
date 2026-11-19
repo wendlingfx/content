@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Wendling FX: Monday MARKET / LEVELS. Run from the repo root on Monday morning (Sao Paulo).
-Charts for XAUUSD, EURUSD and USDCAD (tools/make_levels.py) into media/levels/; Telegram gets the 3 images, TikTok gets one
+Charts for XAUUSD and EURUSD (tools/make_levels.py) into media/levels/; Telegram gets the 3 images, TikTok gets one
 12 s video with the 3 charts and music. Both at 11:00 UTC. Then commit media, telegram.json and queue.json."""
 import datetime as dt, json, os, random, subprocess, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
