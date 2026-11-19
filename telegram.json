@@ -5,5 +5,12 @@
     "type": "photo",
     "file": "media/cards/wendlingfx-day-2026-11-18.png",
     "caption": "Daily close, Nov 18: +65% on the account. 12 trades closed, losses included.\n\nVerified record: wendlingfx.com"
+  },
+  {
+    "id": "start-guide",
+    "due": "2026-11-19T14:29:24Z",
+    "type": "text",
+    "pin": true,
+    "caption": "How to start copying, step by step\n\nNo cTrader yet, cTrader with Copy, or a broker without Copy: one page with the exact steps for each case.\n\nhttps://wendlingfx.com/start/"
   }
 ]
