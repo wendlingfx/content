@@ -18,5 +18,6 @@
   "site/start/img/signup.png": "start/img/signup.png",
   "site/start/img/stoploss.png": "start/img/stoploss.png",
   "site/start/img/strategy.png": "start/img/strategy.png",
-  "site/start/img/verify.png": "start/img/verify.png"
+  "site/start/img/verify.png": "start/img/verify.png",
+  "server/account.json": "private/account.json"
 }

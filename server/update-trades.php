@@ -4,6 +4,9 @@
 // Run by an hourly cron job: php /home/<user>/domains/wendlingfx.com/public_html/private/update-trades.php
 
 $cfg      = require __DIR__ . '/config.php';
+// private/account.json (synced from the repo, no secrets) can point the stats at another Myfxbook account.
+$ov = is_file(__DIR__ . '/account.json') ? (json_decode((string) file_get_contents(__DIR__ . '/account.json'), true) ?: []) : [];
+if ((int) ($ov['myfxbook_id'] ?? 0) > 0) $cfg['account_id'] = (int) $ov['myfxbook_id'];
 $outFile  = dirname(__DIR__) . '/data/closed-trades.json';
 $sessFile = __DIR__ . '/.session';
 

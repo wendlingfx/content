@@ -89,8 +89,16 @@ if ($missing) { // not configured yet: check the app keys if they are there, the
 $r = call($s, 2100, ['clientId' => trim($cfg['client_id']), 'clientSecret' => trim($cfg['client_secret'])], 2101);
 if (isset($r['_error'])) fail($outFile, 'app auth: ' . $r['_error']);
 
-// Find the account id for the login number.
-$accId = (int) ($tok['account_id'] ?? 0);
+// Find the account id for the login number. private/account.json (synced from the repo, no secrets)
+// overrides the login in ctrader.php, so the project can move to another account without touching the keys.
+$ovFile = __DIR__ . '/account.json';
+$ov = is_file($ovFile) ? (json_decode((string) file_get_contents($ovFile), true) ?: []) : [];
+$want = trim((string) ($ov['ctrader_login'] ?? '')) ?: trim((string) ($cfg['account'] ?? ''));
+$accId = (int) ($tok['account_id'] ?? 0); $login = (string) ($tok['login'] ?? ''); $switched = false;
+if ($accId && $want !== '' && $login !== $want) {
+    $switched = $login !== '' || trim((string) ($ov['ctrader_login'] ?? '')) !== trim((string) ($cfg['account'] ?? ''));
+    $accId = 0;
+}
 if (!$accId) {
     $r = call($s, 2149, ['accessToken' => $access], 2150);
     if (isset($r['_error']) && $refresh !== '') {
@@ -100,13 +108,14 @@ if (!$accId) {
         $r = call($s, 2149, ['accessToken' => $access], 2150);
     }
     if (isset($r['_error'])) fail($outFile, 'account list: ' . $r['_error']);
-    $want = trim((string) ($cfg['account'] ?? '')); $live = [];
-    foreach (($r['ctidTraderAccount'] ?? []) as $a) {
-        if (!empty($a['isLive'])) $live[] = (int) $a['ctidTraderAccountId'];
-        if ($want !== '' && (string) ($a['traderLogin'] ?? '') === $want) $accId = (int) $a['ctidTraderAccountId'];
+    $live = []; $all = $r['ctidTraderAccount'] ?? [];
+    foreach ($all as $a) {
+        if (!empty($a['isLive'])) $live[(int) $a['ctidTraderAccountId']] = (string) ($a['traderLogin'] ?? '');
+        if ($want !== '' && (string) ($a['traderLogin'] ?? '') === $want) { $accId = (int) $a['ctidTraderAccountId']; $login = $want; }
     }
-    if (!$accId && $want === '' && count($live) === 1) $accId = $live[0]; // account left empty: the only live account
-    if (!$accId) fail($outFile, $want === '' ? count($live) . ' live accounts on this token: fill "account" with the login number' : 'account not found for this token');
+    if (!$accId && $want === '' && count($live) === 1) { $accId = array_key_first($live); $login = $live[$accId]; } // the only live account
+    if (!$accId) fail($outFile, $want === '' ? count($live) . ' live accounts on this token: fill "account" with the login number'
+        : 'account ' . $want . ' not found for this token (' . count($all) . ' accounts authorised): authorise it in the cTrader app');
 }
 
 $r = call($s, 2102, ['ctidTraderAccountId' => $accId, 'accessToken' => $access], 2103);
@@ -118,7 +127,10 @@ if (isset($r['_error']) && $refresh !== '') {
 }
 if (isset($r['_error'])) fail($outFile, 'account auth: ' . $r['_error']);
 
-file_put_contents($tokFile, json_encode(['access_token' => $access, 'refresh_token' => $refresh, 'account_id' => $accId]));
+file_put_contents($tokFile, json_encode(['access_token' => $access, 'refresh_token' => $refresh, 'account_id' => $accId, 'login' => $login ?: $want]));
+if ($switched) { // new account: forget the running posts and symbol ids of the old one
+    foreach (['running-posts.json', 'ctrader-symbols.json'] as $f) if (is_file(__DIR__ . '/' . $f)) @rename(__DIR__ . '/' . $f, __DIR__ . '/' . $f . '.old');
+}
 @chmod($tokFile, 0600);
 
 $tr = call($s, 2121, ['ctidTraderAccountId' => $accId], 2122);
