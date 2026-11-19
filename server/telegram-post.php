@@ -27,6 +27,23 @@ function tg(string $token, string $chat, string $text): array {
     return is_array($d) ? $d : ['ok' => false, 'description' => 'no response'];
 }
 
+// One-time environment check for a Telegram user client on this server (no secrets): data/env-probe.json
+$probeFile = dirname(__DIR__) . '/data/env-probe.json';
+if (!is_file($probeFile)) {
+    $dis = array_map('trim', explode(',', (string) ini_get('disable_functions')));
+    $canExec = function_exists('exec') && !in_array('exec', $dis, true);
+    $py = $canExec ? @exec('python3 --version 2>&1') : null;
+    $pyPath = $canExec ? @exec('command -v python3 2>&1') : null;
+    $pip = $canExec ? @exec('python3 -m pip --version 2>&1') : null;
+    $errno = 0; $errstr = '';
+    $fp = @fsockopen('149.154.167.51', 443, $errno, $errstr, 10);
+    $mt = $fp ? 'ok' : ("$errno $errstr"); if ($fp) fclose($fp);
+    $home = getenv('HOME') ?: '';
+    @file_put_contents($probeFile, json_encode(['php' => PHP_VERSION, 'exec' => $canExec, 'python' => $py, 'pythonPath' => $pyPath, 'pip' => $pip,
+        'mtproto443' => $mt, 'homeAboveWeb' => $home !== '' && is_dir($home) && is_writable($home), 'exts' => ['sockets' => extension_loaded('sockets'), 'gmp' => extension_loaded('gmp'), 'openssl' => extension_loaded('openssl')],
+        'at' => gmdate('Y-m-d\TH:i\Z')], JSON_UNESCAPED_SLASHES));
+}
+
 if ($token === '') { pub($pubFile, ['ok' => false, 'error' => 'token not set']); exit(0); }
 
 $state  = jread($stateFile) + ['posted' => [], 'seeded' => false, 'lastWeekly' => ''];
