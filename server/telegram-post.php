@@ -72,7 +72,7 @@ if (empty($state['photoSet'])) {
 // First run: say hello once and mark the trades already closed as seen.
 if (!$state['seeded']) {
     $msg = "Wendling FX: live account updates.\n\n"
-         . "Every trade I close is posted here, in % of the account, losses included. Plus a short result every Sunday.\n\n"
+         . "Every trade I close is posted here, in % of the account, plus a short result every day.\n\n"
          . ($total ? "Account so far: $total.\n" : '')
          . "Verified record: wendlingfx.com\n\n"
          . "Trading on margin is high risk. Not financial advice.";

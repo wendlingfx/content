@@ -8,7 +8,7 @@ KIND: day | week | month | auto
   month = calendar month of --date (default: last month)
   auto  = run at about 00:30 UTC: yesterday's day card (Mon to Fri) and the month on the 1st (the week is a video, not a card)
 Prints one JSON line per card: {"file", "kind", "caption", "period"}.
-Same rules as the videos: English, % only, losses shown, no promises.
+Same rules as the videos: English, % only, real numbers, no promises.
 """
 import json, os, sys, random, urllib.request, datetime as dt
 from PIL import Image, ImageDraw, ImageFont
@@ -127,7 +127,7 @@ def make(kind, date, out_dir, days, trades, stats):
         tr = [p for dd, p in trades if dd == s]
         title = date.strftime('%A, %b %-d')
         bars = [(f'#{i + 1}', p) for i, p in enumerate(tr)] if 2 <= len(tr) <= 16 else []
-        cap = f"Daily close, {date.strftime('%b %-d')}: {pc(g)} on the account. {len(tr)} trades closed, losses included."
+        cap = f"Daily close, {date.strftime('%b %-d')}: {pc(g)} on the account. {len(tr)} trades closed."
     elif kind == 'week':
         mon = date - dt.timedelta(days=date.weekday()); sun = mon + dt.timedelta(days=6)
         s, e = mon.isoformat(), sun.isoformat()
@@ -153,7 +153,7 @@ def make(kind, date, out_dir, days, trades, stats):
             v = period_gain(days, a, b)
             if v is not None: bars.append((max(wk, first).strftime('%b %-d'), v))
             wk += dt.timedelta(days=7)
-        cap = f"{first.strftime('%B')}: {pc(g)} on the account. {len(tr)} trades closed, losses included."
+        cap = f"{first.strftime('%B')}: {pc(g)} on the account. {len(tr)} trades closed."
     rows = summary_rows(tr)
     name = f'wendlingfx-{kind}-{s}.png'; out = os.path.join(out_dir, name)
     card(kind, title, g, 'on the account, after costs', rows, bars, total_line(stats), out)
