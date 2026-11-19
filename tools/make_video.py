@@ -74,14 +74,13 @@ def end_card(sub):
 
 def hook(lines, label, sub=None):
     def fn(t):
-        img = base(); d = ImageDraw.Draw(img); top(d, label, ease(t / 0.4))
-        for i, (s, c) in enumerate(lines):
-            a = ease((t - 0.05 - i * 0.18) / 0.3)  # all lines in place by 0.9 s: Buffer takes the cover at 1 s
-            tc(d, 700 + i * 130 + (1 - a) * 50, s, fit(d, s, 92), mix(c, a))
+        img = base(); d = ImageDraw.Draw(img); top(d, label)
+        for i, (s, c) in enumerate(lines):  # fully visible from frame 0: TikTok uses it as the cover
+            tc(d, 700 + i * 130, s, fit(d, s, 92), c)
         if sub:
             b = ease((t - 0.55) / 0.3)
             tc(d, 700 + len(lines) * 130 + 40 + (1 - b) * 20, sub, inter(40, 'Medium'), mix(MUTED, b))
-        return fade(img, t)
+        return img
     return fn
 
 # ---------- kinds ----------
