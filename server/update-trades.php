@@ -119,6 +119,10 @@ uasort($store, fn($a, $b) => strcmp($a['closed'], $b['closed']));
 file_put_contents($storeFile . '.tmp', json_encode($store, JSON_UNESCAPED_SLASHES));
 rename($storeFile . '.tmp', $storeFile);
 $all = array_values($store);
+// Fresh start (account.json "start", UTC ISO): only trades closed from that moment count, and the headline
+// numbers are rebuilt from those trades instead of Myfxbook's lifetime figures.
+$start = trim((string) ($ov['start'] ?? ''));
+if ($start !== '') $all = array_values(array_filter($all, fn($t) => strcmp($t['closed'], $start) >= 0));
 
 $trades = array_reverse($all);
 $allCount = count($trades);
@@ -145,16 +149,21 @@ rename($cf . '.tmp', $cf);
 echo 'ok: curve ' . count($curve) . " points\n";
 
 // Headline and detail stats: data/stats.json
+// Fresh-start profit factor and max drawdown from the kept trades (compounded % curve).
+$gw = 0.0; $gl = 0.0; foreach ($all as $t) { if ($t['result'] > 0) $gw += $t['result']; else $gl -= $t['result']; }
+$pfStart = $gl > 0 ? round($gw / $gl, 2) : ($gw > 0 ? 99.0 : 0.0);
+$peak = 1.0; $ddStart = 0.0; $gg = 1.0;
+foreach ($all as $t) { $gg *= 1 + $t['pct'] / 100; $peak = max($peak, $gg); $ddStart = max($ddStart, round((1 - $gg / $peak) * 100, 2)); }
 if ($acc) {
     $winP  = array_values(array_filter(array_column($all, 'pct'), fn($p) => $p > 0));
     $lossP = array_values(array_filter(array_column($all, 'pct'), fn($p) => $p < 0));
-    $first = $all ? substr($all[0]['closed'], 0, 10) : gmdate('Y-m-d');
+    $first = $all ? substr($all[0]['closed'], 0, 10) : ($start !== '' ? substr($start, 0, 10) : gmdate('Y-m-d'));
     $daysRun = max(1, (int) floor((time() - strtotime($first)) / 86400) + 1);
     $stats = [
         'updated'      => gmdate('Y-m-d\TH:i\Z'),
-        'gain'         => (float) ($acc['gain'] ?? 0),
-        'profitFactor' => (float) ($acc['profitFactor'] ?? 0),
-        'drawdown'     => (float) ($acc['drawdown'] ?? 0),
+        'gain'         => $start !== '' ? ($curve ? end($curve)['g'] : 0) : (float) ($acc['gain'] ?? 0),
+        'profitFactor' => $start !== '' ? $pfStart : (float) ($acc['profitFactor'] ?? 0),
+        'drawdown'     => $start !== '' ? $ddStart : (float) ($acc['drawdown'] ?? 0),
         'openPct'      => ((float) ($acc['balance'] ?? 0)) > 0 ? round((((float) ($acc['equity'] ?? 0)) - (float) $acc['balance']) * 100 / (float) $acc['balance'], 2) : 0,
         'winRate'      => $allCount ? round($wins * 100 / $allCount, 1) : 0,
         'trades'       => $allCount,
@@ -194,6 +203,13 @@ foreach ($r['dailyGain'] as $item) {
     }
 }
 ksort($days);
+if ($start !== '') { // rebase the daily curve to zero at the fresh start
+    $sd = substr($start, 0, 10); $base = 0.0;
+    foreach ($days as $d => $g) if ($d < $sd) $base = $g;
+    $re = [];
+    foreach ($days as $d => $g) if ($d >= $sd) $re[$d] = round(((1 + $g / 100) / (1 + $base / 100) - 1) * 100, 2);
+    $days = $re;
+}
 $out = [];
 foreach ($days as $d => $g) $out[] = ['d' => $d, 'g' => $g];
 $tmp = $perfFile . '.tmp';
