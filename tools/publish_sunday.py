@@ -31,7 +31,7 @@ def main():
         m['used'] = d; done.append(cid)
     pid = f'promo-tg-{d}'
     if pid not in ids_tg:
-        tg.append({'id': pid, 'due': f'{d}T21:00:00Z', 'type': 'text', 'caption': 'Short videos of the account every week on TikTok: https://www.tiktok.com/@wendlingfx'}); done.append(pid)
+        tg.append({'id': pid, 'due': f'{d}T21:00:00Z', 'type': 'text', 'caption': 'Short videos of the account every week on TikTok: https://www.tiktok.com/@wendling.fx'}); done.append(pid)
     if today.isocalendar()[1] % 2 == 0:
         vid_id = f'promo-tt-{d}'
         if vid_id not in ids_q:
