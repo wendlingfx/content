@@ -5,7 +5,6 @@
   "signal_url": "https://www.mql5.com/en/signals/2369976",
   "max_open_min": 360,
   "max_day_drop_pct": 20,
-  "cap_equity": 450,
   "expiries": [
     {
       "name": "VPS do MQL5 (fim do teste grátis, vira US$ 15/mês)",
