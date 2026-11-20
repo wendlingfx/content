@@ -20,7 +20,7 @@ def card_video(png, mp4, seed):
                     '-af', 'afade=t=out:st=6.3:d=1.7', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', tmp], check=True)
     os.replace(tmp, mp4)
 
-TAGS = {'day': '#forex #trading #dailyclose', 'week': '#forex #trading #copytrading', 'month': '#forex #trading #copytrading'}
+TAGS = {'mindset': '#tradingmindset #forex #discipline', 'day': '#forex #trading #dailyclose', 'week': '#forex #trading #copytrading', 'month': '#forex #trading #copytrading'}
 
 def jload(p):
     try: return json.load(open(p))
@@ -29,7 +29,7 @@ def jload(p):
 def main():
     dry = '--dry' in sys.argv
     os.makedirs(CARDS, exist_ok=True)
-    out = subprocess.run([sys.executable, os.path.join(ROOT, 'tools', 'make_card.py'), 'auto', CARDS], capture_output=True, text=True, check=True).stdout
+    out = subprocess.run([sys.executable, os.path.join(ROOT, 'tools', 'make_card.py'), 'auto', CARDS] + (['--dry'] if dry else []), capture_output=True, text=True, check=True).stdout
     now = dt.datetime.now(dt.timezone.utc)
     tg_due = now.strftime('%Y-%m-%dT%H:%M:%SZ')
     tt_due = (now.replace(minute=0, second=0, microsecond=0) + dt.timedelta(hours=1, minutes=30)).strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -46,7 +46,9 @@ def main():
         if cid not in have_q:
             vid = r['file'].replace('.png', '.mp4')
             if not dry: card_video(os.path.join(CARDS, r['file']), os.path.join(ROOT, 'media', vid), r['period'])
-            q.append({'id': cid, 'file': vid, 'noTelegram': True, 'due': tt_due, 'text': r['caption'].split('\n')[0] + ' Verified on Myfxbook. ' + TAGS[r['kind']]})
+            first = r['caption'].split('\n')[0]
+            text = (first + ' No trades today. ' if r['kind'] == 'mindset' else first + ' Verified on Myfxbook. ') + TAGS[r['kind']]
+            q.append({'id': cid, 'file': vid, 'noTelegram': True, 'due': tt_due, 'text': text})
         done.append({'queued': cid, 'telegram': tg_due, 'tiktok': tt_due})
     if not dry:
         json.dump(tg, open(tgp, 'w'), indent=2, ensure_ascii=False)

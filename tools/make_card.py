@@ -6,7 +6,9 @@ KIND: day | week | month | auto
   day   = the UTC day of --date (default: yesterday)
   week  = Mon to Sun week containing --date (default: the week that just ended)
   month = calendar month of --date (default: last month)
-  auto  = run at about 00:30 UTC: yesterday's day card (Mon to Fri) and the month on the 1st (the week is a video, not a card)
+  auto  = run at about 00:30 UTC: yesterday's day card (Mon to Fri) and the month on the 1st (the week is a video, not a card).
+          A weekday with no closed trade gets no result card: it gets a MINDSET card instead (quote from tools/mindset.json,
+          rotated without repeats until the list is used up; media/cards/mindset-used.json keeps track, so the daily task's git add media saves it).
 Prints one JSON line per card: {"file", "kind", "caption", "period"}.
 Same rules as the videos: English, % only, real numbers, no promises.
 """
@@ -159,6 +161,51 @@ def make(kind, date, out_dir, days, trades, stats):
     card(kind, title, g, 'on the account, after costs', rows, bars, total_line(stats), out)
     return {'file': name, 'kind': kind, 'period': s, 'caption': cap + "\n\nVerified record: wendlingfx.com"}
 
+def wrap(d, s, font, maxw):
+    lines, cur = [], ''
+    for w in s.split():
+        t = (cur + ' ' + w).strip()
+        if d.textlength(t, font=font) <= maxw: cur = t
+        else: lines.append(cur); cur = w
+    if cur: lines.append(cur)
+    return lines
+
+def pick_quote(seed):
+    qs = json.load(open(os.path.join(HERE, 'mindset.json')))
+    up = os.path.join(os.path.dirname(HERE), 'media', 'cards', 'mindset-used.json')
+    try: used = json.load(open(up))
+    except Exception: used = []
+    left = [q for q in qs if q['id'] not in used] or qs
+    if len(left) == len(qs): used = []
+    q = random.Random(seed).choice(left)
+    return q, used + [q['id']], up
+
+def mindset(date, out_dir, stats, dry=False):
+    s = date.isoformat()
+    q, used, up = pick_quote(s)
+    img, d = canvas()
+    header(d, 'mindset', fmt='IMAGE')
+    title = date.strftime('%A, %b %-d')
+    tc(d, 340, title, fit(d, title, 60, 800), WHITE)
+    size = 96
+    while True:
+        f = unb(size, 700); lines = wrap(d, q['quote'], f, 860)
+        if len(lines) * size * 1.25 <= 700 or size <= 56: break
+        size -= 6
+    y = 470 + (700 - len(lines) * size * 1.25) / 2
+    for ln in lines:
+        tc(d, y, ln, f, WHITE); y += size * 1.25
+    tc(d, 1260, 'No trades today.', inter(46, 'Medium'), MUTED)
+    tc(d, 1600, total_line(stats), inter(40, 'SemiBold'), WHITE)
+    f = unb(84); w1 = d.textlength('w', font=f); w2 = d.textlength('fx', font=f); xx = CX - (w1 + w2) / 2
+    d.text((xx, 1650), 'w', font=f, fill=WHITE); d.text((xx + w1, 1650), 'fx', font=f, fill=LIME)
+    tc(d, 1750, 'Verified on Myfxbook  ·  wendlingfx.com', inter(32, 'Medium'), MUTED)
+    tc(d, 1810, 'Trading on margin is high risk. Not financial advice.', inter(26, 'Regular'), DIM)
+    name = f'wendlingfx-mindset-{s}.png'; img.save(os.path.join(out_dir, name), optimize=True)
+    if not dry: json.dump(used, open(up, 'w'))
+    return {'file': name, 'kind': 'mindset', 'period': s, 'quote': q['id'],
+            'caption': q['quote'] + "\n\nNo trades today. Every trade on the account is public: wendlingfx.com"}
+
 def main():
     a = sys.argv[1:]
     if len(a) < 2: raise SystemExit(__doc__)
@@ -177,6 +224,8 @@ def main():
     elif kind == 'month': jobs.append(('month', date or (today.replace(day=1) - dt.timedelta(days=1))))
     else: raise SystemExit('unknown kind')
     for k, dte in jobs:
+        if k == 'day' and kind == 'auto' and not [p for dd, p in trades if dd == dte.isoformat()]:
+            print(json.dumps(mindset(dte, out_dir, stats, '--dry' in a))); continue
         r = make(k, dte, out_dir, days, trades, stats)
         print(json.dumps(r if r else {'skipped': k, 'date': dte.isoformat()}))
 
