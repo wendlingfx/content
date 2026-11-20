@@ -86,9 +86,19 @@ foreach ($remote as $item) {
 
 // 3. Send pending items.
 $changed = false; $stateChanged = false; $log = [];
+$P = is_file(__DIR__ . '/pause.json') ? (json_decode((string) file_get_contents(__DIR__ . '/pause.json'), true) ?: []) : [];
+$okId = function (string $id) use ($P): bool { if (empty($P['paused'])) return true; foreach ((array) ($P['allow'] ?? []) as $a) if ($a !== '' && strpos($id, $a) === 0) return true; return false; };
+// Pause: delete still-scheduled Buffer posts listed in pause.json bufferDelete (once each).
+foreach ((array) ($P['bufferDelete'] ?? []) as $old) {
+    $bid = $state[$old]['bufferId'] ?? null;
+    if (!$bid || ($state[$old]['status'] ?? '') === 'deleted') continue;
+    $d = gql($key, 'mutation { deletePost(input: { id: ' . s($bid) . ' }) { __typename } }');
+    if (empty($d['errors']) && empty($d['_error'])) { $state[$old]['status'] = 'deleted'; $stateChanged = true; $log[] = $old . ': deleted in Buffer'; }
+    else $log[] = $old . ': Buffer delete failed (' . ($d['errors'][0]['message'] ?? ($d['_error'] ?? '?')) . ')';
+}
 foreach ($items as $it) {
     $item = $it['item'];
-    if ($it['status'] !== 'pending') continue;
+    if ($it['status'] !== 'pending' || !$okId((string) ($item['id'] ?? ''))) continue;
     $imgs = (array) ($item['images'] ?? []);
     $file = basename((string) ($item['file'] ?? ''));
     if (!$imgs && $it['src'] === 'remote' && !is_file($mediaDir . $file)) {

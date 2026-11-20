@@ -31,5 +31,12 @@
     "file": "wendlingfx-2026-11-20-howto.mp4",
     "due": "2026-11-20T15:00:00Z",
     "text": "How to copy my trades in 5 steps on cTrader Copy: open the account, verify, fund, start copying and set your loss limit. Full guide with screenshots at wendlingfx.com/start. #copytrading #ctrader #forex"
+  },
+  {
+    "id": "comingsoon",
+    "due": "2026-11-20T12:45:00Z",
+    "file": "media/wendlingfx-comingsoon.mp4",
+    "noTelegram": true,
+    "text": "Coming soon. A new live account, every trade tracked from day one. wendlingfx.com #forex #copytrading #trading"
   }
 ]

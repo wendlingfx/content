@@ -156,9 +156,10 @@ if ($open > 0) {
 // Telegram "running" posts: a position open for RUN_MIN minutes with RUN_PCT % of the account or more in profit is posted
 // once (symbol, side and % only: no entry price, stop or target). When it closes, the result is posted as a reply.
 const RUN_MIN = 30; const RUN_PCT = 1.0;
+$pauseCfg = is_file(__DIR__ . '/pause.json') ? (json_decode((string) file_get_contents(__DIR__ . '/pause.json'), true) ?: []) : [];
 $tgCfgFile = __DIR__ . '/telegram.php';
 $runFile = __DIR__ . '/running-posts.json';
-if (is_file($tgCfgFile) && $balance > 0) {
+if (empty($pauseCfg['paused']) && is_file($tgCfgFile) && $balance > 0) {
     $tgc = require $tgCfgFile; $tgTok = trim((string) ($tgc['token'] ?? '')); $tgChat = (string) ($tgc['chat'] ?? '@wendlingfx');
     $run = is_file($runFile) ? (json_decode((string) file_get_contents($runFile), true) ?: []) : [];
     $symFile = __DIR__ . '/ctrader-symbols.json';

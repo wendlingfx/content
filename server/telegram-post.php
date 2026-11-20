@@ -14,6 +14,9 @@ $pubFile   = $dataDir . 'telegram-status.json';
 
 function pub(string $f, array $s): void { $s['checked'] = gmdate('Y-m-d\TH:i\Z'); @file_put_contents($f, json_encode($s, JSON_UNESCAPED_SLASHES)); }
 function jread(string $f): array { return is_file($f) ? (json_decode((string) file_get_contents($f), true) ?: []) : []; }
+// Content pause (private/pause.json): only ids starting with an allowed prefix are posted.
+$PAUSE = jread(__DIR__ . '/pause.json');
+function allowed(array $P, string $id): bool { if (empty($P['paused'])) return true; foreach ((array) ($P['allow'] ?? []) as $a) if ($a !== '' && strpos(preg_replace('/^tt:/', '', $id), $a) === 0) return true; return false; }
 function pc(float $x): string { $a = abs($x); $a = $a >= 10 ? (string) round($a) : (string) round($a, 1); return ($x > 0 ? '+' : ($x < 0 ? '-' : '')) . $a . '%'; }
 
 function tg(string $token, string $chat, string $text): array {
@@ -137,9 +140,24 @@ if (!$state['mediaSeeded']) {
     foreach ($todo as $m) if (($m['due'] ?? '') !== '' && strtotime($m['due']) < time() - 3600) $state['media'][$m['id']] = 'skipped';
     $state['mediaSeeded'] = true;
 }
+// One-time channel purge (pause.json purge: {id, upTo}): deletes messages 1..upTo and unpins all, before any new post.
+$pg = $PAUSE['purge'] ?? null;
+if (is_array($pg) && !empty($pg['id']) && ($state['purged'] ?? '') !== $pg['id']) {
+    $upTo = min(1000, (int) ($pg['upTo'] ?? 0)); $okN = 0; $errs = [];
+    tg_call($token, 'unpinAllChatMessages', ['chat_id' => $chat]);
+    for ($a = 1; $a <= $upTo; $a += 100) {
+        $ids = range($a, min($upTo, $a + 99));
+        $r = tg_call($token, 'deleteMessages', ['chat_id' => $chat, 'message_ids' => json_encode($ids)]);
+        if (!empty($r['ok'])) $okN++; else $errs[] = $r['description'] ?? '?';
+        // Fallback one by one (older Bot API or partial rights)
+        if (empty($r['ok'])) foreach ($ids as $i) tg_call($token, 'deleteMessage', ['chat_id' => $chat, 'message_id' => $i]);
+    }
+    $state['purged'] = $pg['id'];
+    $log[] = 'purge ' . $pg['id'] . ': ' . ($errs ? 'bulk failed (' . implode('; ', $errs) . '), single deletes tried' : 'done up to ' . $upTo);
+}
 $mediaSent = 0;
 foreach ($todo as $m) {
-    if (isset($state['media'][$m['id']]) || $mediaSent >= 2) continue;
+    if (isset($state['media'][$m['id']]) || $mediaSent >= 2 || !allowed($PAUSE, (string) $m['id'])) continue;
     if (($m['due'] ?? '') === '' || strtotime($m['due']) > time()) continue;
     $type = $m['type'] ?? 'text'; $cap = (string) ($m['caption'] ?? '');
     if ($type === 'text') {
@@ -166,7 +184,7 @@ foreach ($todo as $m) {
 
 // Weekly reminder of the start guide: Wednesday from 15:00 UTC, once per ISO week, rotating texts.
 $wk = gmdate('o-\WW');
-if ((int) gmdate('N') === 3 && (int) gmdate('G') >= 15 && ($state['startPromo'] ?? '') !== $wk) {
+if (empty($PAUSE['paused']) && (int) gmdate('N') === 3 && (int) gmdate('G') >= 15 && ($state['startPromo'] ?? '') !== $wk) {
     $texts = ["How to start copying, step by step\n\nNo cTrader yet, cTrader with Copy, or a broker without Copy: pick your case and follow the screenshots.\n\nhttps://wendlingfx.com/start/",
               "Thinking about copying the account?\n\nThe whole setup is 5 to 7 steps, with screenshots for each one. Your money stays in an account in your name.\n\nhttps://wendlingfx.com/start/",
               "Copy the live account on cTrader Copy\n\nMinimum US$500. 30% fee on new profit only. Stop anytime.\n\nStep by step: https://wendlingfx.com/start/"];
@@ -192,7 +210,7 @@ if ($alertChat) {
     foreach (($ps['state'] ?? []) as $id => $st) if (($st['status'] ?? '') === 'error') $prob['buffer-' . $id] = "TikTok recusou o post $id: " . substr((string) ($st['error'] ?? ''), 0, 80);
     foreach ($todo as $m) {
         $due = strtotime($m['due'] ?? '') ?: 0;
-        if ($due && $due < time() - 2 * 3600 && $due > time() - 3 * 86400 && !isset($state['media'][$m['id']])) $prob['tg-' . $m['id']] = 'Post do Telegram atrasado: ' . $m['id'];
+        if (allowed($PAUSE, (string) $m['id']) && $due && $due < time() - 2 * 3600 && $due > time() - 3 * 86400 && !isset($state['media'][$m['id']])) $prob['tg-' . $m['id']] = 'Post do Telegram atrasado: ' . $m['id'];
     }
     foreach ($log as $l) if (strpos($l, 'error') !== false || strpos($l, 'not found') !== false) $prob['tglog-' . md5($l)] = 'Telegram: ' . $l;
     $hs = jread(__DIR__ . '/health-state.json') + ['open' => []];
