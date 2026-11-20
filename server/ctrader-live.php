@@ -238,5 +238,16 @@ if (!is_file($mf) || time() - filemtime($mf) > 3300) {
 }
 fclose($s);
 
+// Copy watch (private, read by telegram-post.php): balance, open positions and when the account last moved.
+$cwFile = __DIR__ . '/copy-state.json';
+$cw = is_file($cwFile) ? (json_decode((string) file_get_contents($cwFile), true) ?: []) : [];
+$oldest = 0;
+foreach (($rc['position'] ?? []) as $p) { $ot = (int) ($p['tradeData']['openTimestamp'] ?? 0); if ($ot > 0) $oldest = max($oldest, (int) round((time() * 1000 - $ot) / 60000)); }
+if ($open > 0 || (isset($cw['balance']) && abs((float) $cw['balance'] - $balance) > 0.005)) $cw['activityAt'] = time();
+if (($cw['day'] ?? '') !== gmdate('Y-m-d')) { $cw['day'] = gmdate('Y-m-d'); $cw['dayStart'] = $balance; }
+$cw = ['login' => $want, 'balance' => $balance, 'equity' => $balance + $float, 'open' => $open, 'oldestMin' => $oldest, 'updated' => time()] + $cw;
+$cw['balance'] = $balance; $cw['equity'] = $balance + $float; $cw['open'] = $open; $cw['oldestMin'] = $oldest; $cw['updated'] = time(); $cw['login'] = $want;
+file_put_contents($cwFile, json_encode($cw));
+
 out($outFile, ['ok' => true, 'open' => $open, 'floatingPct' => $balance > 0 ? round($float * 100 / $balance, 2) : 0]);
 echo "ok: $open open\n";

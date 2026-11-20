@@ -213,6 +213,43 @@ if ($alertChat) {
         if (allowed($PAUSE, (string) $m['id']) && $due && $due < time() - 2 * 3600 && $due > time() - 3 * 86400 && !isset($state['media'][$m['id']])) $prob['tg-' . $m['id']] = 'Post do Telegram atrasado: ' . $m['id'];
     }
     foreach ($log as $l) if (strpos($l, 'error') !== false || strpos($l, 'not found') !== false) $prob['tglog-' . md5($l)] = 'Telegram: ' . $l;
+    // ---- Copy chain watch (private/copy-watch.json, no secrets): signal page -> MT5 -> copier -> cTrader ----
+    $cwc = jread(__DIR__ . '/copy-watch.json');
+    if (!empty($cwc['enabled'])) {
+        $cs = jread(__DIR__ . '/copy-state.json'); $ws = jread(__DIR__ . '/copy-watch-state.json');
+        $nm = (string) ($cwc['name'] ?? 'sinal');
+        // 1. Provider's public trade count, read at most every 30 min. A failed read is ignored (the site rate-limits).
+        if ($mktOpen && time() - (int) ($ws['fetchedAt'] ?? 0) >= 1700 && !empty($cwc['signal_url'])) {
+            $ch = curl_init((string) $cwc['signal_url']);
+            curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 25, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTPHEADER => ['Accept-Language: en'],
+                CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36']);
+            $html = (string) curl_exec($ch); curl_close($ch);
+            $ws['fetchedAt'] = time();
+            if (preg_match('~Trades:\s*</div>[^<]*<[^>]+>\s*([\d\s\x{a0}]+)<~u', $html, $mm)) {
+                $n = (int) preg_replace('/\D/', '', $mm[1]);
+                if (isset($ws['trades']) && $n > (int) $ws['trades']) $ws['pending'] = time();
+                $ws['trades'] = $n; $ws['okAt'] = time();
+            }
+        }
+        // 2. Provider closed a trade: our account must have moved (position seen or balance changed) in the hours before.
+        $act = (int) ($cs['activityAt'] ?? 0);
+        if (!empty($ws['pending']) && $act >= (int) $ws['pending'] - 6 * 3600) unset($ws['pending']);
+        if (!empty($ws['pending']) && time() - (int) $ws['pending'] > 20 * 60) $prob['copy-miss'] = "CÓPIA: $nm fechou trade e a conta cTrader não teve movimento. Conferir assinatura, VPS e Duplikium";
+        if ($mktOpen && isset($ws['okAt']) && time() - (int) $ws['okAt'] > 26 * 3600) $prob['copy-src'] = "CÓPIA: não consigo ler a página do $nm há mais de 1 dia";
+        // 3. Position open far longer than the provider's usual holding time.
+        if ((int) ($cs['open'] ?? 0) > 0 && (int) ($cs['oldestMin'] ?? 0) > (int) ($cwc['max_open_min'] ?? 360)) $prob['copy-stuck'] = 'CÓPIA: posição aberta na cTrader há ' . round($cs['oldestMin'] / 60, 1) . ' h (pode ter ficado órfã)';
+        // 4. Equity drop in the day.
+        $ds = (float) ($cs['dayStart'] ?? 0); $eq = (float) ($cs['equity'] ?? 0);
+        if ($ds > 0 && $eq < $ds * (1 - (float) ($cwc['max_day_drop_pct'] ?? 20) / 100)) $prob['copy-drop'] = 'CÓPIA: conta cTrader caiu ' . round((1 - $eq / $ds) * 100) . '% hoje';
+        if ($eq > (float) ($cwc['cap_equity'] ?? 1e12)) $prob['copy-cap'] = 'CÓPIA: conta passou de US$ ' . (int) $cwc['cap_equity'] . ', subir o teto de lote no Duplikium';
+        // 5. Renewals.
+        foreach ((array) ($cwc['expiries'] ?? []) as $e) {
+            $left = (strtotime(($e['date'] ?? '') . ' 23:59 UTC') - time()) / 86400;
+            if ($left < (float) ($e['warn_days'] ?? 3)) $prob['copy-exp-' . md5(($e['name'] ?? '') . ($e['date'] ?? ''))] = ($left < 0 ? 'VENCEU: ' : 'Vence em ' . max(0, (int) ceil($left)) . ' dia(s): ') . ($e['name'] ?? '?') . ' (' . ($e['date'] ?? '') . ')';
+        }
+        file_put_contents(__DIR__ . '/copy-watch-state.json', json_encode($ws));
+        @file_put_contents($dataDir . 'copy-watch.json', json_encode(['checked' => gmdate('Y-m-d\TH:i\Z'), 'providerTrades' => $ws['trades'] ?? null, 'providerReadAt' => isset($ws['okAt']) ? gmdate('Y-m-d\TH:i\Z', (int) $ws['okAt']) : null, 'pending' => !empty($ws['pending']), 'open' => (int) ($cs['open'] ?? 0)]));
+    }
     $hs = jread(__DIR__ . '/health-state.json') + ['open' => []];
     $new = array_diff_key($prob, $hs['open']); $gone = array_diff_key($hs['open'], $prob);
     $msg = [];

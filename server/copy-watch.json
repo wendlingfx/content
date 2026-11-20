@@ -1,0 +1,31 @@
+{
+  "note": "Copy chain watch read by private/telegram-post.php. No secrets. expiries: date is the renewal or end date, warn_days how many days before the alert starts. Update a date after each renewal.",
+  "enabled": true,
+  "name": "Onyx",
+  "signal_url": "https://www.mql5.com/en/signals/2369976",
+  "max_open_min": 360,
+  "max_day_drop_pct": 20,
+  "cap_equity": 450,
+  "expiries": [
+    {
+      "name": "VPS do MQL5 (fim do teste grátis, vira US$ 15/mês)",
+      "date": "2026-11-21",
+      "warn_days": 1
+    },
+    {
+      "name": "Assinatura do sinal Onyx no MQL5",
+      "date": "2026-12-20",
+      "warn_days": 4
+    },
+    {
+      "name": "Plano do Duplikium (data aproximada, conferir)",
+      "date": "2026-12-19",
+      "warn_days": 5
+    },
+    {
+      "name": "Token do cTrader no site",
+      "date": "2026-12-19",
+      "warn_days": 4
+    }
+  ]
+}
