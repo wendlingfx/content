@@ -21,5 +21,7 @@
   "site/start/img/verify.png": "start/img/verify.png",
   "server/account.json": "private/account.json",
   "server/pause.json": "private/pause.json",
-  "server/copy-watch.json": "private/copy-watch.json"
+  "server/copy-watch.json": "private/copy-watch.json",
+  "site/blog/week-in-markets-2026-11-20/week.png": "blog/week-in-markets-2026-11-20/week.png",
+  "site/blog/week-in-markets-2026-11-20/index.html": "blog/week-in-markets-2026-11-20/index.html"
 }

@@ -20,5 +20,11 @@
     "file": "media/wendlingfx-comingsoon.mp4",
     "pin": true,
     "caption": "Coming soon.\n\nA new live account, every trade tracked from day one.\n\nwendlingfx.com"
+  },
+  {
+    "id": "blog-2026-11-20",
+    "due": "2026-11-21T13:05:00Z",
+    "type": "text",
+    "caption": "Week in markets: AI doubts hit stocks, gold and bitcoin\n\nA hawkish set of Fed minutes and growing unease over the AI buildout pushed nearly every major market lower.\n\nRead: https://wendlingfx.com/blog/week-in-markets-2026-11-20/"
   }
 ]
