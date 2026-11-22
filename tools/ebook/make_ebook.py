@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Wendling FX: builds the free e-book "Forex Foundations, Volume 1" as a PDF.
 
-Usage: python3 tools/ebook/make_ebook.py [out.pdf]   (default: site/guide/forex-foundations.pdf)
+Usage: python3 tools/ebook/make_ebook.py [out.pdf] [--book vol2]
+  default book: Volume 1 (content.html + charts.py) -> site/guide/forex-foundations.pdf
+  --book vol2 --dir PRIVATE_DIR: Volume 2 (PRIVATE_DIR/content.html + charts.py) -> /tmp/the-complete-playbook.pdf
+  (paid product: sources stay out of this public repo and the PDF never goes into site/)
 Steps: draws the charts (charts.py, real data in market.json/h1.json), wraps content.html with the brand styles and prints it with headless Chrome.
 Refresh the data first if you want newer charts: curl wendlingfx.com/data/market.json and market-h1.json into this folder.
 """
@@ -21,7 +24,7 @@ CSS = """
 html,body{margin:0;background:#0A0A0A}
 body{font-family:Inter,sans-serif;color:#E9E9E9;font-size:10.6pt;line-height:1.55}
 .page{width:210mm;height:297mm;padding:20mm 18mm 22mm;position:relative;overflow:hidden;page-break-after:always;background:#0A0A0A}
-.page:after{content:"Wendling FX · Forex Foundations";position:absolute;left:18mm;bottom:10mm;font-size:7.5pt;color:#6B6B6B}
+.page:after{content:"Wendling FX · %(name)s";position:absolute;left:18mm;bottom:10mm;font-size:7.5pt;color:#6B6B6B}
 .page:before{content:"";position:absolute;top:0;left:0;right:0;height:3mm;background:#C6FF3D}
 .cover:before,.cover:after,.dark:after{display:none}
 .chap{font-family:Unb;font-size:22pt;line-height:1.15;color:#fff;margin:4mm 0 6mm;letter-spacing:-.02em}
@@ -65,12 +68,23 @@ ol.toc span{font-family:Unb;color:#C6FF3D;font-size:13pt;width:12mm}
 .legal{position:absolute;bottom:18mm;left:18mm;right:18mm;font-size:7.8pt;color:#7A7A7A;line-height:1.45}
 """
 
+BOOKS = {
+    'vol1': {'name': 'Forex Foundations', 'dir': HERE, 'out': os.path.join(ROOT, 'site', 'guide', 'forex-foundations.pdf')},
+    # Volume 2 is a paid product: its sources live outside this public repo (pass --dir), and the PDF never goes into site/.
+    'vol2': {'name': 'The Complete Playbook', 'dir': None, 'out': '/tmp/the-complete-playbook.pdf'},
+}
+
 def main():
-    out = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else os.path.join(ROOT, 'site', 'guide', 'forex-foundations.pdf')
+    args = sys.argv[1:]
+    book = BOOKS[args[args.index('--book') + 1]] if '--book' in args else BOOKS['vol1']
+    if '--dir' in args: book = dict(book, dir=os.path.abspath(args[args.index('--dir') + 1]))
+    if not book['dir']: raise SystemExit('vol2 needs --dir with its private sources')
+    rest = [a for i, a in enumerate(args) if a not in ('--book', '--dir') and (i == 0 or args[i - 1] not in ('--book', '--dir'))]
+    out = os.path.abspath(rest[0]) if rest else book['out']
     work = tempfile.mkdtemp(prefix='wfx-ebook-')
-    subprocess.run([sys.executable, os.path.join(HERE, 'charts.py'), work], check=True, capture_output=True)
-    body = open(os.path.join(HERE, 'content.html'), encoding='utf-8').read()
-    html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Forex Foundations · Wendling FX</title><style>' + (CSS % {'f': FONTS}) + '</style></head><body>' + body + '</body></html>'
+    subprocess.run([sys.executable, os.path.join(book['dir'], 'charts.py'), work], check=True, capture_output=True)
+    body = open(os.path.join(book['dir'], 'content.html'), encoding='utf-8').read()
+    html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>' + book['name'] + ' · Wendling FX</title><style>' + (CSS % {'f': FONTS, 'name': book['name']}) + '</style></head><body>' + body + '</body></html>'
     src = os.path.join(work, 'book.html'); open(src, 'w', encoding='utf-8').write(html)
     os.makedirs(os.path.dirname(out), exist_ok=True)
     chrome = shutil.which('google-chrome') or shutil.which('chromium')
