@@ -1,8 +1,10 @@
 {
   "note": "Content pause switch. When paused is true the server posts nothing to Telegram or TikTok except queue/telegram items whose id starts with one of the allow prefixes; running-trade posts and the weekly start reminder are off too. Health alerts keep working.",
-  "paused": false,
+  "paused": true,
   "allow": [
-    "comingsoon"
+    "comingsoon",
+    "blog-",
+    "market-"
   ],
   "purge": {
     "id": "p-2026-11-20",
