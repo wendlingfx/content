@@ -52,6 +52,7 @@ ul.flags li::marker{color:#FF4D4D}
 .formula{font-family:Unb;font-size:11pt;color:#C6FF3D;background:#141414;border-radius:3mm;padding:4mm;text-align:center;margin:2mm 0 3mm}
 .small{font-size:8.4pt;color:#8A8A8A}
 .toc-h{font-family:Unb;font-size:30pt;color:#fff;margin:6mm 0 8mm}
+ol.steps{padding-left:5mm}ol.steps li{margin:2mm 0}
 ol.toc{list-style:none;padding:0;margin:0}ol.toc li{display:flex;gap:6mm;align-items:baseline;font-size:14pt;color:#fff;border-bottom:1px solid #222;padding:4mm 0}
 ol.toc span{font-family:Unb;color:#C6FF3D;font-size:13pt;width:12mm}
 .cover{padding:26mm 20mm}.cover .bar{position:absolute;top:0;left:0;right:0;height:9mm;background:#C6FF3D}
