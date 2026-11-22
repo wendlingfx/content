@@ -350,6 +350,10 @@ def render(scenes, out_mp4, music):
     for x in os.listdir(tmpdir): os.remove(os.path.join(tmpdir, x))
     os.rmdir(tmpdir)
 
+def paused():
+    try: return bool(json.load(open(os.path.join(os.path.dirname(HERE), 'server', 'pause.json'))).get('paused'))
+    except Exception: return False
+
 def main():
     args = sys.argv[1:]
     if len(args) < 2: raise SystemExit(__doc__)
@@ -357,6 +361,8 @@ def main():
     opt = dict(zip(args[2::2], args[3::2])); OPT.update(opt)
     day = dt.date.fromisoformat(opt['--date']) if '--date' in opt else dt.date.today()
     if kind == 'auto': kind = {0: 'week', 2: 'diary', 4: 'growth'}.get(day.weekday(), 'diary')
+    if kind in ('week', 'diary', 'growth', 'month') and paused():
+        raise SystemExit('paused: account content is paused in server/pause.json (no video with account numbers until it is turned off)')
     scenes, text = KINDS[kind]()
     mdir = os.path.join(HERE, 'music')
     tracks = sorted(x for x in os.listdir(mdir) if x.endswith('.m4a'))

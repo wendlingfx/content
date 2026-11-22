@@ -28,6 +28,10 @@ def jload(p):
 
 def main():
     dry = '--dry' in sys.argv
+    try: paused = json.load(open(os.path.join(ROOT, 'server', 'pause.json'))).get('paused')
+    except Exception: paused = False
+    if paused:  # account content paused: no result or mindset cards (they carry the account total)
+        print(json.dumps({'skipped': 'paused'})); return
     os.makedirs(CARDS, exist_ok=True)
     out = subprocess.run([sys.executable, os.path.join(ROOT, 'tools', 'make_card.py'), 'auto', CARDS] + (['--dry'] if dry else []), capture_output=True, text=True, check=True).stdout
     now = dt.datetime.now(dt.timezone.utc)
