@@ -4,7 +4,10 @@
   "allow": [
     "comingsoon",
     "blog-",
-    "market-"
+    "market-",
+    "levels-",
+    "meme-",
+    "promo-"
   ],
   "purge": {
     "id": "p-2026-11-20",
