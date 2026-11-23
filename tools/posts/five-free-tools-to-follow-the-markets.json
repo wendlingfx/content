@@ -1,0 +1,47 @@
+{
+ "slug": "five-free-tools-to-follow-the-markets",
+ "title": "Five free tools to follow the markets",
+ "date": "2026-11-23",
+ "dek": "A short list from a Fusion Markets author: one course, one news feed, one charting platform, one macro newsletter and one economic calendar.",
+ "image": "site/blog/five-free-tools-to-follow-the-markets/chart.png",
+ "image_alt": "Table of five free tools: Fusion Academy, Forexlive, TradingView, John Authers at Bloomberg and the Fusion economic calendar, with what each one answers",
+ "sections": [
+  {
+   "h": "Keep the list short",
+   "p": [
+    "The author, Phil Horner, keeps the list to five on purpose, to avoid analysis paralysis. These are the tools he says he uses almost every day to follow the markets and sharpen his trading."
+   ]
+  },
+  {
+   "h": "The five",
+   "p": [
+    "Fusion Academy is a free course inside the Fusion client hub. It covers how markets move, how analysis works and how risk is managed, in short lessons at your own pace, with progress saved between sessions.",
+    "Forexlive is a live news site focused on currencies. The author values the real time coverage and points to how it handled the Brexit vote.",
+    "TradingView is the charting and technical analysis platform. The article calls it widely used and notes the author is less focused on technical analysis himself, though clients rate it highly.",
+    "John Authers at Bloomberg writes a daily macro newsletter on stocks, bonds and wider market themes, sent around the European open. The author treats it as essential for placing currencies inside the bigger macro picture.",
+    "The Fusion Markets economic calendar is the one Fusion specific tool in the list. You can save events, watch results arrive in real time and review how price moved on past releases. The author gives the example of a 200 pip move in the dollar that a missed FOMC meeting would explain."
+   ]
+  },
+  {
+   "h": "How we would use them",
+   "p": [
+    "Read the macro note first, check the calendar for the day, keep the news feed open for surprises, and use charts to see where price sits against its own history. The course is for the days nothing is happening. None of this tells you what to trade. It tells you what you are trading into. For the macro note in practice, see our latest [week in markets](/blog/week-in-markets-2026-11-20/)."
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "title": "Fusion Markets: My Top Five Tools for Traders",
+   "url": "https://fusionmarkets.com/posts/my-top-five-tools-for-traders"
+  }
+ ],
+ "figures": [
+  {
+   "image": "site/blog/five-free-tools-to-follow-the-markets/routine.png",
+   "after": 2,
+   "alt": "Five-step daily routine using the five free tools",
+   "image_url": "blog/five-free-tools-to-follow-the-markets/routine.png"
+  }
+ ],
+ "image_url": "blog/five-free-tools-to-follow-the-markets/chart.png"
+}

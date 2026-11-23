@@ -3,7 +3,9 @@
 
 Usage: python3 tools/make_post.py POST.json
 POST.json: {"slug", "title", "date" (YYYY-MM-DD), "dek" (one-line summary), "sections": [{"h": "heading or empty", "p": ["paragraph", ...]}],
-            "sources": [{"title", "url"}], "image": "optional repo path of a PNG shown under the title"}
+            "sources": [{"title", "url"}], "image": "repo path of the cover PNG (also the list thumbnail)",
+            "figures": [{"image": "repo path", "after": section index, "alt": "text"}]  (2 to 3 images per post in total)}
+Paragraph text may hold links: [text](/blog/slug/) or [text](https://...). Each post ends with 3 related posts (internal links).
 Writes site/blog/<slug>/index.html, rebuilds site/blog/index.html from site/blog/posts.json and adds both to server/manifest.json
 (the server pulls them within the hour). Prints {"url"}.
 Rules: English, plain and factual, every number with its source, no price targets, no buy or sell calls, no em dashes.
@@ -42,6 +44,10 @@ img.cover{{width:100%;height:auto;border-radius:14px;border:1px solid var(--line
 .tg a.b{{background:var(--tg);color:#fff;border-radius:999px;padding:10px 18px;font-weight:600}}
 .list a.post{{display:block;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0;color:var(--text)}}.list a.post:hover{{text-decoration:none;border-color:#3a3a3a}}
 .list .d{{color:var(--muted);font-size:14px}}.list h3{{font-family:Unbounded,sans-serif;font-size:19px;margin:6px 0}}
+figure{{margin:22px 0}}figure img{{width:100%;height:auto;border-radius:14px;border:1px solid var(--line);display:block}}
+.list a.post{{display:flex;gap:18px;align-items:center}}.list a.post img{{width:176px;aspect-ratio:16/9;object-fit:cover;border-radius:10px;border:1px solid var(--line);flex:none}}
+@media(max-width:560px){{.list a.post{{flex-direction:column;align-items:flex-start}}.list a.post img{{width:100%}}}}
+.rel{{margin-top:40px}}.rel h2{{font-size:18px;margin:0 0 6px}}
 footer{{border-top:1px solid var(--line);margin-top:56px;padding:24px 0 40px;color:var(--muted);font-size:13px}}
 </style>
 </head>
@@ -59,15 +65,29 @@ def nice(d):
     import datetime as dt
     return dt.date.fromisoformat(d).strftime('%B %-d, %Y')
 
-def post_page(p):
+import re
+def md(t):
+    t = e(t)
+    return re.sub(r'\[([^\]]+)\]\((/[^)\s]+|https://[^)\s]+)\)', lambda m: f'<a href="{m.group(2)}">{m.group(1)}</a>', t)
+
+def card(p):
+    img = f'<img src="/{e(p["image_url"])}" alt="" loading="lazy">' if p.get('image_url') else ''
+    return f'<a class="post" href="/blog/{e(p["slug"])}/">{img}<div><div class="d">{nice(p["date"])}</div><h3>{e(p["title"])}</h3><div class="d">{e(p["dek"])}</div></div></a>'
+
+def post_page(p, posts=()):
     canon = f"{SITE}/blog/{p['slug']}/"
     og = f'<meta property="og:image" content="{SITE}/{e(p["image_url"])}">' if p.get('image_url') else ''
     out = [HEAD.format(title=e(p['title']), desc=e(p['dek']), canon=canon, ogimg=og)]
     out.append(f"<article><h1>{e(p['title'])}</h1><div class=\"meta\">{nice(p['date'])} · Wendling FX</div><p class=\"dek\">{e(p['dek'])}</p>")
     if p.get('image_url'): out.append(f'<img class="cover" src="/{e(p["image_url"])}" alt="{e(p.get("image_alt", p["title"]))}">')
-    for s in p['sections']:
+    figs = {}
+    for f in p.get('figures', []): figs.setdefault(f['after'], []).append(f)
+    for i, s in enumerate(p['sections']):
         if s.get('h'): out.append(f"<h2>{e(s['h'])}</h2>")
-        for para in s.get('p', []): out.append(f"<p>{e(para)}</p>")
+        for para in s.get('p', []): out.append(f"<p>{md(para)}</p>")
+        for f in figs.get(i, []): out.append(f'<figure><img src="/{e(f["image_url"])}" alt="{e(f.get("alt", p["title"]))}" loading="lazy"></figure>')
+    rel = [x for x in sorted(posts, key=lambda x: x['date'], reverse=True) if x['slug'] != p['slug']][:3]
+    if rel: out.append('<div class="rel list"><h2>Keep reading</h2>' + ''.join(card(x) for x in rel) + '</div>')
     out.append(TG)
     if p.get('sources'):
         out.append('<div class="src"><b>Sources</b><ul>' + ''.join(f'<li><a href="{e(x["url"])}" rel="nofollow noopener">{e(x["title"])}</a></li>' for x in p['sources']) + '</ul></div>')
@@ -78,7 +98,7 @@ def index_page(posts):
     out = [HEAD.format(title='Blog', desc='Market notes and trading education from the Wendling FX live account.', canon=f'{SITE}/blog/', ogimg='')]
     out.append('<h1>Market notes</h1><p class="dek">What moved the markets, and how to trade with less risk, in plain English.</p><div class="list">')
     for p in sorted(posts, key=lambda x: x['date'], reverse=True):
-        out.append(f'<a class="post" href="/blog/{e(p["slug"])}/"><div class="d">{nice(p["date"])}</div><h3>{e(p["title"])}</h3><div class="d">{e(p["dek"])}</div></a>')
+        out.append(card(p))
     out.append('</div>' + TG + FOOT)
     return '\n'.join(out)
 
@@ -93,9 +113,14 @@ def main():
     if p.get('image'):
         name = os.path.basename(p['image']); p['image_url'] = f"blog/{p['slug']}/{name}"
         man[p['image']] = p['image_url']
-    open(os.path.join(BLOG, p['slug'], 'index.html'), 'w').write(post_page(p))
+    for f in p.get('figures', []):
+        f['image_url'] = f"blog/{p['slug']}/{os.path.basename(f['image'])}"; man[f['image']] = f['image_url']
+    if len(p.get('figures', [])) + (1 if p.get('image') else 0) < 2: print('WARNING: fewer than 2 images', file=sys.stderr)
     lp = os.path.join(BLOG, 'posts.json'); posts = json.load(open(lp)) if os.path.exists(lp) else []
-    posts = [x for x in posts if x['slug'] != p['slug']] + [{'slug': p['slug'], 'title': p['title'], 'date': p['date'], 'dek': p['dek']}]
+    posts = [x for x in posts if x['slug'] != p['slug']] + [{'slug': p['slug'], 'title': p['title'], 'date': p['date'], 'dek': p['dek'], 'image_url': p.get('image_url', '')}]
+    os.makedirs(os.path.join(ROOT, 'tools', 'posts'), exist_ok=True)
+    json.dump(p, open(os.path.join(ROOT, 'tools', 'posts', p['slug'] + '.json'), 'w'), indent=1, ensure_ascii=False)
+    open(os.path.join(BLOG, p['slug'], 'index.html'), 'w').write(post_page(p, posts))
     json.dump(posts, open(lp, 'w'), indent=2, ensure_ascii=False)
     open(os.path.join(BLOG, 'index.html'), 'w').write(index_page(posts))
     man[f"site/blog/{p['slug']}/index.html"] = f"blog/{p['slug']}/index.html"

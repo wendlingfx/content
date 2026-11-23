@@ -26,6 +26,10 @@ img.cover{width:100%;height:auto;border-radius:14px;border:1px solid var(--line)
 .tg a.b{background:var(--tg);color:#fff;border-radius:999px;padding:10px 18px;font-weight:600}
 .list a.post{display:block;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0;color:var(--text)}.list a.post:hover{text-decoration:none;border-color:#3a3a3a}
 .list .d{color:var(--muted);font-size:14px}.list h3{font-family:Unbounded,sans-serif;font-size:19px;margin:6px 0}
+figure{margin:22px 0}figure img{width:100%;height:auto;border-radius:14px;border:1px solid var(--line);display:block}
+.list a.post{display:flex;gap:18px;align-items:center}.list a.post img{width:176px;aspect-ratio:16/9;object-fit:cover;border-radius:10px;border:1px solid var(--line);flex:none}
+@media(max-width:560px){.list a.post{flex-direction:column;align-items:flex-start}.list a.post img{width:100%}}
+.rel{margin-top:40px}.rel h2{font-size:18px;margin:0 0 6px}
 footer{border-top:1px solid var(--line);margin-top:56px;padding:24px 0 40px;color:var(--muted);font-size:13px}
 </style>
 </head>
@@ -44,10 +48,13 @@ footer{border-top:1px solid var(--line);margin-top:56px;padding:24px 0 40px;colo
 <p>Margin shows the equity locked up to hold the trade. Risk is what you lose if the stop is hit ($100 in the example). Margin is the capital tied up, which is much larger. A trade can be sized correctly and still cause a margin call if the account lacks free equity.</p>
 <p>Profit and loss shows the outcome of a trade from its open and close price. Run it twice, once at the target and once at the stop, and compare the dollars. A setup risking $100 to make $80 can look attractive on a chart and poor on paper.</p>
 <p>Swaps shows the daily overnight cost or credit for long and short separately. Direction matters, because one side can cost while the other earns. Swaps add up over multi week holds, gold and high differential pairs can carry larger charges, and most brokers charge triple on Wednesday for the weekend. If you close before rollover, you can skip this tab.</p>
+<figure><img src="/blog/how-to-size-a-trade-with-the-fusion-calculators/stops.png" alt="Bar chart: position size for $100 risk at 10, 25, 50 and 100 pip stops" loading="lazy"></figure>
 <h2>The order to use them in</h2>
 <p>Pip value at 1 lot, then the sizing formula, then margin at that size, then profit and loss at target and stop, then swaps if you hold overnight. It takes about a minute. Skip steps and you end up guessing size, being shaken out by normal noise, or taking trades whose reward does not justify the risk.</p>
+<figure><img src="/blog/how-to-size-a-trade-with-the-fusion-calculators/breakeven.png" alt="Bar chart: break-even win rate at different risk to reward ratios" loading="lazy"></figure>
 <h2>Two things to add by hand</h2>
-<p>Add the spread to your stop distance. A 25 pip stop with a 1 pip spread is really 26 pips of risk. And always round the size down: rounding 0.083 lots up to 0.09 pushes you past your risk limit.</p>
+<p>Add the spread to your stop distance. A 25 pip stop with a 1 pip spread is really 26 pips of risk. And always round the size down: rounding 0.083 lots up to 0.09 pushes you past your risk limit. To see what a string of losses does at a given risk, read the <a href="/blog/drawdown-maths-why-losses-cost-more-than-they-look/">drawdown maths</a>.</p>
+<div class="rel list"><h2>Keep reading</h2><a class="post" href="/blog/five-free-tools-to-follow-the-markets/"><div><div class="d">November 23, 2026</div><h3>Five free tools to follow the markets</h3><div class="d">A short list from a Fusion Markets author: one course, one news feed, one charting platform, one macro newsletter and one economic calendar.</div></div></a><a class="post" href="/blog/drawdown-maths-why-losses-cost-more-than-they-look/"><img src="/blog/drawdown-maths-why-losses-cost-more-than-they-look/chart.png" alt="" loading="lazy"><div><div class="d">November 23, 2026</div><h3>Drawdown maths: why losses cost more than they look</h3><div class="d">A 50% loss needs a 100% gain to undo. The curve is steeper than most traders feel, and it is the reason position size matters more than entries.</div></div></a><a class="post" href="/blog/every-order-type-and-where-each-one-fails/"><img src="/blog/every-order-type-and-where-each-one-fails/chart.png" alt="" loading="lazy"><div><div class="d">November 23, 2026</div><h3>Every order type, and where each one fails</h3><div class="d">Market, limit, stop, stop-limit, trailing and OCO. Each one gives you certainty on one thing and takes it away on another.</div></div></a></div>
 <div class="tg"><span>Follow the live account for free on Telegram.</span><a class="b" href="https://t.me/wendlingfx">Join on Telegram</a></div>
 <div class="src"><b>Sources</b><ul><li><a href="https://fusionmarkets.com/posts/how-to-use-fusions-trading-calculators" rel="nofollow noopener">Fusion Markets: How to Use Fusion&#x27;s Trading Calculators</a></li></ul></div>
 </article></main>

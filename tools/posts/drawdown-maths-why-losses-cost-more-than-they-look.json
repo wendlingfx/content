@@ -1,0 +1,65 @@
+{
+ "slug": "drawdown-maths-why-losses-cost-more-than-they-look",
+ "title": "Drawdown maths: why losses cost more than they look",
+ "date": "2026-11-23",
+ "dek": "A 50% loss needs a 100% gain to undo. The curve is steeper than most traders feel, and it is the reason position size matters more than entries.",
+ "image": "site/blog/drawdown-maths-why-losses-cost-more-than-they-look/chart.png",
+ "image_alt": "Left: the gain needed to recover from losses of 10, 20, 40 and 50 percent. Right: account loss and recovery gain after six losing trades in a row at 1, 5 and 10 percent risk per trade",
+ "sections": [
+  {
+   "h": "The asymmetry",
+   "p": [
+    "Gains and losses are not mirror images. Lose 10% and you need 11.1% to get back to even. Lose 50% and the remaining capital has to double. The rule behind it is simple: a loss of d needs a gain of d divided by (1 minus d), because every percentage you earn afterwards is applied to a smaller account.",
+    "Take $10,000 that falls to $5,000. A 20% gain on what is left adds $1,000, not the $2,000 you just lost. That gap is why deep drawdowns feel so slow to repair."
+   ]
+  },
+  {
+   "h": "Six losses in a row is not rare",
+   "p": [
+    "If a strategy wins half of its trades, six losses in a row show up about once in every 64 sequences. Not common, not exotic. What happens next depends almost entirely on how much you risk per trade. Using the compounding formula, with fixed risk on each trade:",
+    "At 1% risk, the account is down about 5.9% and needs 6.2% to recover. At 5%, it is down 26.5% and needs 36%. At 10%, it is down 46.9% and needs about 88%. The streak is identical. Only the size changed."
+   ]
+  },
+  {
+   "h": "Where traders get caught",
+   "p": [
+    "Higher risk can lift returns in the short run, but past a certain point it lowers them over time, because the drawdowns eat more than the extra size earns. There is also a behavioural cost. At a 40% drawdown you need roughly 67% to recover, and that is usually the moment people abandon a sound system, widen stops or start forcing trades."
+   ]
+  },
+  {
+   "h": "Three rules that follow from the maths",
+   "p": [
+    "Decide the largest drawdown you can accept first, then [size positions](/blog/how-to-size-a-trade-with-the-fusion-calculators/) to fit it. A 20% limit does not fit 5% risk per trade, since ten losses at 5% already put the account near 40% down.",
+    "Treat 1% to 2% risk per trade as a ceiling, not a target.",
+    "Cut size while you are in a drawdown. Fixed percentage risk does this on its own, because the dollar risk shrinks with the account. Fixed lot sizes keep the same exposure and dig deeper."
+   ]
+  },
+  {
+   "h": "Why we care",
+   "p": [
+    "Survival depends less on the quality of entries than on making sure an ordinary losing streak never turns into a hole you cannot climb out of. Work out your recovery numbers before you need them. The chart above is computed from the formula, not from our results. The order types that enforce a stop are covered in [every order type, and where each one fails](/blog/every-order-type-and-where-each-one-fails/)."
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "title": "Fusion Markets: Drawdown Maths, the True Cost of Losses",
+   "url": "https://fusionmarkets.com/posts/drawdown-maths"
+  }
+ ],
+ "figures": [
+  {
+   "image": "site/blog/drawdown-maths-why-losses-cost-more-than-they-look/streak.png",
+   "after": 1,
+   "alt": "Line chart: account value after ten losses in a row at 1%, 2%, 5% and 10% risk per trade",
+   "image_url": "blog/drawdown-maths-why-losses-cost-more-than-they-look/streak.png"
+  },
+  {
+   "image": "site/blog/drawdown-maths-why-losses-cost-more-than-they-look/risk-limit.png",
+   "after": 3,
+   "alt": "Bar chart: largest risk per trade that keeps losing streaks inside a 10%, 20% or 30% drawdown limit",
+   "image_url": "blog/drawdown-maths-why-losses-cost-more-than-they-look/risk-limit.png"
+  }
+ ],
+ "image_url": "blog/drawdown-maths-why-losses-cost-more-than-they-look/chart.png"
+}

@@ -1,0 +1,65 @@
+{
+ "slug": "every-order-type-and-where-each-one-fails",
+ "title": "Every order type, and where each one fails",
+ "date": "2026-11-23",
+ "dek": "Market, limit, stop, stop-limit, trailing and OCO. Each one gives you certainty on one thing and takes it away on another.",
+ "image": "site/blog/every-order-type-and-where-each-one-fails/chart.png",
+ "image_alt": "Two by two grid: market, stop and trailing stop orders guarantee the fill but not the price; limit and stop-limit orders guarantee the price but not the fill; no order guarantees both",
+ "sections": [
+  {
+   "h": "The trade-off behind every order",
+   "p": [
+    "Most traders pick an order type early and never look at it again. Each type buys you certainty on one thing, either that you get filled or that you get your price, and gives up the other."
+   ]
+  },
+  {
+   "h": "Market and limit orders",
+   "p": [
+    "A market order guarantees you get in, not at what price. It fails when markets are fast or thin, around data releases or just after the weekend open, because slippage tends to land against you when volatility spikes. Use it when being in the trade matters more than the exact entry, and avoid it in the minutes before a major release such as Non-Farm Payrolls.",
+    "A limit order guarantees the price, not the fill. A buy limit sits below the market and a sell limit above it. It fails when price touches your level, turns, and runs without you. A limit placed two pips from a move of about 300 pips is the classic case. A fill can also be information: if price traded through your level, someone was willing to take the other side."
+   ]
+  },
+  {
+   "h": "Stops and stop-limits",
+   "p": [
+    "A stop order becomes a market order once price touches the trigger, so there is no price protection. You can use it as a stop loss or as a breakout entry. It fails when price gaps. A stop at 1.0850 that fills at 1.0805 after a gap is 45 pips worse than planned. That is rarely a broker hunting your stop. It is simply the liquidity that was available.",
+    "A stop-limit turns into a limit order after the trigger instead of a market order. With a stop at 1.0850 and a limit at 1.0840, you control the worst price. The risk is that price gaps through the limit, the order never fills, and a losing position stays open. For that reason it suits entries better than exits."
+   ]
+  },
+  {
+   "h": "Trailing stops and OCO",
+   "p": [
+    "A trailing stop follows price at a fixed distance, moves only in your favour and never steps back. A 50 pip trail on a long position is an example. It fails three ways: too tight, and normal noise stops you out; too wide, and most of the open profit is gone before it triggers; or the trail runs in your terminal instead of on the server, so it stops working when the platform closes. A VPS helps with the last one. Set the distance from current volatility, not from a round number.",
+    "OCO means one cancels the other. Two pending orders are linked, and when one fills the other disappears. It suits range breakouts and attaching a target and a stop to a position. If the platform has no native OCO, you have to manage the pair by hand, and an orphaned order can open an unwanted position after the trade is closed."
+   ]
+  },
+  {
+   "h": "Picking one",
+   "p": [
+    "Entering at a level you already marked: limit, accepting that you will miss some trades. Entering on confirmation or a breakout: stop entry, accepting some slippage. Entering a live setup right now: market order, outside major news. Exiting to limit a loss: stop loss, sized so a fill worse than the stop is survivable. Exiting to protect profit: trailing stop, with the distance based on volatility.",
+    "Because stops do not guarantee a price, check your size against a fill that is worse than the stop, before you enter. For how the stop distance sets your position size, see [sizing a trade with the calculators](/blog/how-to-size-a-trade-with-the-fusion-calculators/)."
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "title": "Fusion Markets: Every Order Type Explained, and Where Each One Fails You",
+   "url": "https://fusionmarkets.com/posts/every-order-type-explained"
+  }
+ ],
+ "figures": [
+  {
+   "image": "site/blog/every-order-type-and-where-each-one-fails/ladder.png",
+   "after": 1,
+   "alt": "Price ladder showing where buy stop, sell limit, buy limit and sell stop orders sit relative to the current price",
+   "image_url": "blog/every-order-type-and-where-each-one-fails/ladder.png"
+  },
+  {
+   "image": "site/blog/every-order-type-and-where-each-one-fails/goal.png",
+   "after": 3,
+   "alt": "Table matching each trading goal to an order type and its main weakness",
+   "image_url": "blog/every-order-type-and-where-each-one-fails/goal.png"
+  }
+ ],
+ "image_url": "blog/every-order-type-and-where-each-one-fails/chart.png"
+}

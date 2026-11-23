@@ -1,0 +1,63 @@
+{
+ "slug": "what-changes-when-you-trade-over-the-holidays",
+ "title": "What changes when you trade over the holidays",
+ "date": "2026-11-23",
+ "dek": "Spreads do not necessarily widen in December. The real risks are thin liquidity and longer gaps.",
+ "image": "site/blog/what-changes-when-you-trade-over-the-holidays/chart.png",
+ "image_alt": "Timeline of five December phases from early December to early January, with Christmas week and the days to New Year marked as the highest risk",
+ "sections": [
+  {
+   "h": "The usual advice is half right",
+   "p": [
+    "The common line is that spreads blow out in December. The author at Fusion Markets checked it against the broker's own spread tool and found average spreads stay tight through the holidays. Maximum spreads follow the same daily pattern as the rest of the year, tied to the rollover window and not to the calendar. Real widening comes with volatility events, which can land in any month.",
+    "The risk is somewhere else: market depth and gaps."
+   ]
+  },
+  {
+   "h": "What genuinely changes",
+   "p": [
+    "From about the second week of December, the institutions that supply most of the depth scale back. The market stays open but it is thinner. A tight quote can hold very little volume behind it, so a larger order moves price further than usual, and closures get longer."
+   ]
+  },
+  {
+   "h": "The December calendar",
+   "p": [
+    "Early December is normal and often busy, with the last central bank meetings of the year (Fed, ECB, RBA) setting up January positioning. Mid December brings smaller ranges and stalled trends, so price turns choppy. Christmas week is the thinnest stretch, with most major centres closed on the 25th and many on the 26th. Between Christmas and New Year it is quiet but not safe, because thin books meet year end flows. In early January participants return and volatility can resolve the December ranges quickly."
+   ]
+  },
+  {
+   "h": "Year end flows and longer gaps",
+   "p": [
+    "Fund rebalancing, corporate currency settlements and bank balance sheet adjustments run on deadlines and have little to do with price. A currency can move hard for a session or two and then reverse in January. These flows tend to cluster around the London 4pm fix, which is a poor place to enter without a specific reason.",
+    "A gap is the distance between where the market closed and where it reopens. Holidays stretch closures to around three days, and year end can bunch several together. A stop loss becomes a market order when triggered, so if price gaps past it, the fill can be much worse than the stop. Size positions to survive a worse fill, not just the stop distance."
+   ]
+  },
+  {
+   "h": "Swaps keep running",
+   "p": [
+    "Financing charges and credits accrue over closed days too. If you carry a negative carry position through year end, work out the cost in advance."
+   ]
+  },
+  {
+   "h": "How to adjust",
+   "p": [
+    "Trade smaller instead of widening stops. Check holiday hours for each instrument before entering. Assume a fill beyond your stop on anything held through a closure. Prefer London and the London to New York overlap, which keep more depth than Asia. Treat holiday breakouts with more scepticism than the same move in November. Consider closing before long closures unless you have a clear reason to hold. Quiet markets look harmless, but thin sessions have produced sharp moves, including in early January Asian hours. Tight spreads and low volatility do not mean low risk. For why trading smaller beats widening stops, see the [drawdown maths](/blog/drawdown-maths-why-losses-cost-more-than-they-look/)."
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "title": "Fusion Markets: What Actually Changes When You Trade Over the Holidays",
+   "url": "https://fusionmarkets.com/posts/what-changes-when-you-trade-over-holidays"
+  }
+ ],
+ "figures": [
+  {
+   "image": "site/blog/what-changes-when-you-trade-over-the-holidays/adjust.png",
+   "after": 5,
+   "alt": "Five habits for trading thin holiday markets",
+   "image_url": "blog/what-changes-when-you-trade-over-the-holidays/adjust.png"
+  }
+ ],
+ "image_url": "blog/what-changes-when-you-trade-over-the-holidays/chart.png"
+}

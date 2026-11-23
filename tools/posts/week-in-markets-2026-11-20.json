@@ -1,0 +1,120 @@
+{
+ "slug": "week-in-markets-2026-11-20",
+ "title": "Week in markets: AI doubts hit stocks, gold and bitcoin",
+ "date": "2026-11-20",
+ "dek": "A hawkish set of Fed minutes and growing unease over the AI buildout pushed nearly every major market lower.",
+ "sections": [
+  {
+   "h": "The short version",
+   "p": [
+    "This was a broad risk-off week. The Nasdaq 100 lost 9.4%, the Dow 7.5% and the DAX 8.5%. Gold fell 8.9% and bitcoin 9.4%, so the usual places people hide did not help much. WTI crude gave up 4.9%. In currencies the moves were smaller: EUR/USD slipped 0.5%, GBP/USD 0.9%, and USD/JPY fell 0.7% as the yen firmed.",
+    "Two threads ran through it: a Federal Reserve that still leans toward raising rates, and a market that is asking harder questions about artificial intelligence spending. New to sizing risk? Start with the [drawdown maths](/blog/drawdown-maths-why-losses-cost-more-than-they-look/)."
+   ]
+  },
+  {
+   "h": "The Fed minutes kept hikes on the table",
+   "p": [
+    "On Wednesday the Fed published the minutes of its October 27 to 28 meeting. The committee held the funds rate at 3.75% to 4%, but the vote was 10 to 2, with Lisa Cook and Beth Hammack preferring a quarter point hike. Almost all participants said further increases would likely be appropriate, and a couple said a bigger step could be weighed in December if inflation data disappoint.",
+    "The minutes also gave AI a lot of space. Many officials described the AI buildout as a real source of inflation pressure, and staff flagged fast growing and hard to see AI related debt. Officials discussed the risk that returns on that spending fall short and asset prices reprice. That is close to what markets then did."
+   ]
+  },
+  {
+   "h": "Stocks: the AI trade under pressure",
+   "p": [
+    "Equity losses built through the week and accelerated on Friday, the worst session of the five for the Nasdaq 100. Market reports pointed to doubts about AI valuations, about how the data center buildout is being financed, and to new policy noise around data centers built abroad. Reuters reported that the S&P 500 and the Dow had entered correction territory.",
+    "Not everything was gloomy. The University of Michigan's final November reading showed consumer sentiment at 51.5, up from 48.0 in October, with one year inflation expectations easing to 3.7%."
+   ]
+  },
+  {
+   "h": "Gold, yields and the dollar",
+   "p": [
+    "Gold hit a 13 month low on Monday. Hike expectations had the 10 year Treasury yield above 5% and the dollar index near its strongest level since April 2025, which raises the cost of holding a metal that pays no yield. The selling continued through the week. Yields dropped on Friday and gold still fell, so rates were not the whole story.",
+    "In Britain, October CPI came in at 3.6% against 3.7% expected, with core steady at 2.8%, and sterling softened. USD/JPY spent the week below the 160 area where Japan's finance ministry had warned the week before against rapid moves, a reminder that intervention risk is still there."
+   ]
+  },
+  {
+   "h": "Oil: more supply in the tanks",
+   "p": [
+    "The EIA weekly report showed US commercial crude stocks up 3.4 million barrels in the week to November 13, far more than analysts expected, with gasoline up 5.2 million barrels. Add weaker risk appetite and WTI had little support."
+   ]
+  },
+  {
+   "h": "What to watch next week",
+   "p": [
+    "Wednesday, November 25: the Fed publishes its Beige Book on regional economic conditions.",
+    "Thursday, November 26: Thanksgiving holiday in the US. The Fed moves that day's statistical releases to Friday, November 27. Expect thin liquidity around the holiday.",
+    "Further out, the Fed meets on December 8 to 9 with new projections, and the ECB on December 16 to 17."
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "title": "Federal Reserve: minutes of the FOMC meeting of October 27 to 28, 2026 (release)",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261118a.htm"
+  },
+  {
+   "title": "Federal Reserve: FOMC minutes, October 27 to 28, 2026 (PDF)",
+   "url": "https://www.federalreserve.gov/monetarypolicy/files/fomcminutes20261028.pdf"
+  },
+  {
+   "title": "Federal Reserve: November 2026 calendar",
+   "url": "https://www.federalreserve.gov/newsevents/2026-november.htm"
+  },
+  {
+   "title": "Federal Reserve: FOMC meeting calendar",
+   "url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+  },
+  {
+   "title": "ECB: monetary policy meeting calendar",
+   "url": "https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html"
+  },
+  {
+   "title": "EIA: Weekly Petroleum Status Report, November 18, 2026",
+   "url": "https://www.eia.gov/petroleum/supply/weekly/archive/2026/2026_11_18/wpsr_2026_11_18.php"
+  },
+  {
+   "title": "BOE Report (Reuters): US crude, gasoline and distillate stocks rise",
+   "url": "https://boereport.com/2026/11/18/us-crude-stocks-gasoline-and-distillate-inventories-rise-eia-says/amp/"
+  },
+  {
+   "title": "BullionVault: gold price news, November 16, 2026",
+   "url": "https://www.bullionvault.com/gold-news/gold-price-news/gold-price-reasons-sell-111620261"
+  },
+  {
+   "title": "FinChannel: Nasdaq falls as S&P 500 and Dow enter corrections",
+   "url": "https://finchannel.com/nasdaq-falls-5-3-as-sp-500-and-dow-enter-corrections/142573/american-business-trends/stock-prices/2026/11/"
+  },
+  {
+   "title": "Vista Global: weekly stock market summary, November 20, 2026",
+   "url": "https://vistapglobal.com/weekly-stock-market-summary-november-20-2026-nasdaq-sinks-as-ai-concerns-deepen-consumer-sentiment-improves-aapl-amzn-ant-crwd-eprx-gap-googl-kymr-modd-msft-nvda-ser-spcx-ttwo-vi/"
+  },
+  {
+   "title": "FXStreet: British pound declines as UK headline CPI misses estimates",
+   "url": "https://www.fxstreet.com/news/british-pound-declines-as-uk-headline-cpi-growth-misses-estimates-202611180717"
+  },
+  {
+   "title": "MUFG Research: JPY weekly, November 16, 2026",
+   "url": "https://www.mufgresearch.com/fx/jpy-weekly-16-november-2026/"
+  },
+  {
+   "title": "Wendling FX market data (weekly changes)",
+   "url": "https://wendlingfx.com/data/market.json"
+  }
+ ],
+ "image": "site/blog/week-in-markets-2026-11-20/week.png",
+ "figures": [
+  {
+   "image": "site/blog/week-in-markets-2026-11-20/daily.png",
+   "after": 1,
+   "alt": "Line chart: daily closes for gold, Nasdaq, bitcoin and EUR/USD, 16 to 20 November",
+   "image_url": "blog/week-in-markets-2026-11-20/daily.png"
+  },
+  {
+   "image": "site/blog/week-in-markets-2026-11-20/range.png",
+   "after": 3,
+   "alt": "Bar chart: daily high to low range on 20 November for nine markets",
+   "image_url": "blog/week-in-markets-2026-11-20/range.png"
+  }
+ ],
+ "image_url": "blog/week-in-markets-2026-11-20/week.png"
+}
