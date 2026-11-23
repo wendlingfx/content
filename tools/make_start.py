@@ -34,7 +34,7 @@ def steps(items):
     return '\n'.join(out)
 COUNTRY = '<p class="note">Fusion Markets does not accept clients from a few countries, including the United States, Japan, Spain and New Zealand. If that is your case, open a cTrader account with another broker that offers cTrader Copy (for example IC Markets or Pepperstone) and follow the same steps.</p>'
 COMMON_END = [
-    ('Open the strategy and press Start copying', 'Log in to cTrader, open the WFX Trading strategy and press the green Start copying button.', 'strategy.png', ('Open the WFX Trading strategy', STRAT)),
+    ('Open the strategy and press Start copying', 'Log in to cTrader, open the WFX Aurum strategy and press the green Start copying button.', 'strategy.png', ('Open the WFX Aurum strategy', STRAT)),
     ('Choose the amount and confirm', 'Pick your live account, type the amount to allocate (minimum US$500), check the fee (30% of new profit only) and confirm.', 'copyform.png', None),
     ('Set your loss limit', 'In the strategy menu choose Set equity stop loss and type the lowest amount you accept. If your copy account reaches it, copying stops.', 'stoploss.png', None),
 ]
@@ -47,7 +47,7 @@ NEW = [
 ] + COMMON_END
 HAVE = [
     ('Check your account type', 'cTrader Copy works with hedging accounts. If yours is netting, open a new hedging account with your broker under the same cTrader login.', 'hedging.png', None),
-    ('Find WFX Trading', 'Use the button below while logged in to cTrader. You can also open Copy in the left menu and search for WFX Trading (provider LucasWend).', 'search.png', ('Open the WFX Trading strategy', STRAT)),
+    ('Find WFX Aurum', 'Use the button below while logged in to cTrader. You can also open Copy in the left menu and search for WFX Aurum (provider LucasWend).', 'search.png', ('Open the WFX Aurum strategy', STRAT)),
     ('Press Start copying', 'If the strategy shows up, press Start copying. If it does not, your broker does not list it: go to "My broker has cTrader, no Copy".', 'strategy.png', None),
     ('Choose the amount and confirm', 'Pick your live hedging account, type the amount to allocate (minimum US$500), check the fee (30% of new profit only) and confirm.', 'copyform.png', None),
     ('Set your loss limit', 'In the strategy menu choose Set equity stop loss and type the lowest amount you accept. If your copy account reaches it, copying stops.', 'stoploss.png', None),
@@ -59,7 +59,7 @@ NOCOPY = [
     ('Fund the account', 'Deposit at least US$500. Fusion charges no deposit fee on cards, PayPal, Skrill and Neteller.', 'fund.png', None),
 ] + COMMON_END
 def main():
-    page('start', 'How to start copying', 'Copy the WFX Trading strategy on cTrader Copy: pick your situation and follow the steps.', f'''
+    page('start', 'How to start copying', 'Copy the WFX Aurum strategy on cTrader Copy: pick your situation and follow the steps.', f'''
 <h1>How to start copying</h1>
 <p class="dek">Copying runs inside cTrader Copy. Your money stays in an account in your name at a regulated broker. Which one is you?</p>
 <div class="paths">
@@ -69,11 +69,11 @@ def main():
 </div>
 <p class="note">Not sure? If you have never opened cTrader, pick 1. If cTrader shows a Copy item in the left menu, pick 2. If it doesn't, pick 3.</p>
 ''')
-    page('start/new', "Start copying: I don't have cTrader", 'Step by step, from opening a Fusion Markets account to copying the WFX Trading strategy.',
+    page('start/new', "Start copying: I don't have cTrader", 'Step by step, from opening a Fusion Markets account to copying the WFX Aurum strategy.',
          f'<h1>I don\'t have cTrader</h1><p class="prog">7 steps</p>' + steps(NEW) + COUNTRY + DONE)
-    page('start/have-copy', 'Start copying: I have cTrader with Copy', 'Copy the WFX Trading strategy from your existing cTrader account.',
+    page('start/have-copy', 'Start copying: I have cTrader with Copy', 'Copy the WFX Aurum strategy from your existing cTrader account.',
          '<h1>I have cTrader with Copy</h1><p class="prog">5 steps</p>' + steps(HAVE) + DONE)
-    page('start/no-copy', 'Start copying: my broker has cTrader but no Copy', 'Add a Fusion Markets account to your cTrader login and copy the WFX Trading strategy.',
+    page('start/no-copy', 'Start copying: my broker has cTrader but no Copy', 'Add a Fusion Markets account to your cTrader login and copy the WFX Aurum strategy.',
          '<h1>My broker has cTrader, no Copy</h1><p class="prog">7 steps. You keep your current broker.</p>' + steps(NOCOPY) + COUNTRY + DONE)
     man = json.load(open('server/manifest.json'))
     for pth in ['start', 'start/new', 'start/have-copy', 'start/no-copy']: man[f'site/{pth}/index.html'] = f'{pth}/index.html'
