@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Wendling FX: move the site to a new trading account in one step.
 
-Usage: python3 tools/switch_account.py --login 9xxxxxx --strategy 12xxxx --myfxbook-url https://www.myfxbook.com/members/WendlingFX/<slug>/<id>/<key> [--start 2026-11-23T13:00Z]
+Usage: python3 tools/switch_account.py --login 9xxxxxx --strategy 12xxxx --myfxbook-url https://www.myfxbook.com/members/WendlingFX/<slug>/<id>[/<key>] [--start 2026-11-23T13:00Z]
 - server/account.json: ctrader_login, myfxbook_id (taken from the URL) and start (fresh start; default: now, rounded down to the minute, UTC)
 - every Myfxbook link and every cTrader Copy strategy link in site/, site-full/ and tools/make_start.py
 Prints what changed. Does not touch keys or tokens, and does not turn the content pause off.
@@ -18,7 +18,7 @@ def main():
     login, strategy, mfx = arg('--login'), arg('--strategy'), arg('--myfxbook-url')
     if not (login and login.isdigit() and strategy and strategy.isdigit() and mfx):
         raise SystemExit(__doc__)
-    m = re.match(r'https://www\.myfxbook\.com/members/WendlingFX/[^/]+/(\d+)/[A-Za-z0-9]+/?$', mfx)
+    m = re.match(r'https://www\.myfxbook\.com/members/WendlingFX/[^/]+/(\d+)(?:/[A-Za-z0-9]+)?/?$', mfx)
     if not m: raise SystemExit('myfxbook url not recognised: ' + mfx)
     start = arg('--start') or dt.datetime.now(dt.timezone.utc).strftime('%Y-%m-%dT%H:%MZ')
     p = os.path.join(ROOT, 'server', 'account.json')
