@@ -75,8 +75,8 @@ def post_page(p):
     return '\n'.join(out)
 
 def index_page(posts):
-    out = [HEAD.format(title='Blog', desc='Weekly market notes from the Wendling FX live account.', canon=f'{SITE}/blog/', ogimg='')]
-    out.append('<h1>Market notes</h1><p class="dek">What moved the markets this week, from official sources, in plain English.</p><div class="list">')
+    out = [HEAD.format(title='Blog', desc='Market notes and trading education from the Wendling FX live account.', canon=f'{SITE}/blog/', ogimg='')]
+    out.append('<h1>Market notes</h1><p class="dek">What moved the markets, and how to trade with less risk, in plain English.</p><div class="list">')
     for p in sorted(posts, key=lambda x: x['date'], reverse=True):
         out.append(f'<a class="post" href="/blog/{e(p["slug"])}/"><div class="d">{nice(p["date"])}</div><h3>{e(p["title"])}</h3><div class="d">{e(p["dek"])}</div></a>')
     out.append('</div>' + TG + FOOT)

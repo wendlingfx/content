@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to size a trade with the Fusion calculators · Wendling FX</title>
+<meta name="description" content="Pip value, margin, profit and loss, and swaps. A one minute routine that turns a chart idea into a position you can afford to be wrong on.">
+<link rel="canonical" href="https://wendlingfx.com/blog/how-to-size-a-trade-with-the-fusion-calculators/">
+<meta property="og:title" content="How to size a trade with the Fusion calculators"><meta property="og:description" content="Pip value, margin, profit and loss, and swaps. A one minute routine that turns a chart idea into a position you can afford to be wrong on."><meta property="og:type" content="article"><meta property="og:image" content="https://wendlingfx.com/blog/how-to-size-a-trade-with-the-fusion-calculators/chart.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Unbounded:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#0A0A0A;--panel:#141414;--line:#262626;--text:#fff;--muted:#A3A3A3;--lime:#C6FF3D;--tg:#2AABEE}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:18px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--lime);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:760px;margin:0 auto;padding:0 24px}
+header{border-bottom:1px solid var(--line)}.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{font-family:Unbounded,sans-serif;font-weight:700;font-size:20px;color:var(--text);letter-spacing:-.03em}.brand b{color:var(--lime);font-weight:700}
+.nav a.l{color:var(--muted);font-size:15px}
+h1,h2{font-family:Unbounded,sans-serif;letter-spacing:-.03em}h1{font-size:clamp(30px,5vw,46px);line-height:1.1;margin:48px 0 12px}
+h2{font-size:22px;margin:36px 0 10px}.meta{color:var(--muted);font-size:15px;margin-bottom:28px}.dek{font-size:20px;color:#ddd}
+img.cover{width:100%;height:auto;border-radius:14px;border:1px solid var(--line);margin:8px 0 12px}
+.src{border-top:1px solid var(--line);margin-top:40px;padding-top:20px;font-size:15px;color:var(--muted)}.src li{margin:4px 0}
+.tg{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:36px 0}
+.tg a.b{background:var(--tg);color:#fff;border-radius:999px;padding:10px 18px;font-weight:600}
+.list a.post{display:block;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0;color:var(--text)}.list a.post:hover{text-decoration:none;border-color:#3a3a3a}
+.list .d{color:var(--muted);font-size:14px}.list h3{font-family:Unbounded,sans-serif;font-size:19px;margin:6px 0}
+footer{border-top:1px solid var(--line);margin-top:56px;padding:24px 0 40px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="brand" href="/">wendling<b>fx</b></a><a class="l" href="/blog/">Blog</a></div></header>
+<main class="wrap">
+
+<article><h1>How to size a trade with the Fusion calculators</h1><div class="meta">November 23, 2026 · Wendling FX</div><p class="dek">Pip value, margin, profit and loss, and swaps. A one minute routine that turns a chart idea into a position you can afford to be wrong on.</p>
+<img class="cover" src="/blog/how-to-size-a-trade-with-the-fusion-calculators/chart.png" alt="Bar chart: with 100 dollars of risk on EUR/USD, a 25 pip stop allows 0.4 lots and a 50 pip stop allows 0.2 lots, next to the five step calculator routine">
+<h2>Why bother</h2>
+<p>Sizing by feel gives different results from the same strategy. Fusion Markets publishes free calculators that need no login and use live conversion rates. They answer four pre-trade questions: what a pip is worth, how much capital the trade ties up, what a result would be worth, and what holding overnight costs. They sit on four tabs: Margin, Pip Value, Profit and Loss, and Swaps.</p>
+<h2>The fields that appear everywhere</h2>
+<p>Group filters the symbol list. Symbol shows the contract size under the dropdown. For XAU/USD, one lot is 100 ounces of gold. Account base currency sets the currency of the results and converts for you. Contract size is the figure people misread most often, and a lot size that is routine on EUR/USD can be far too large on gold.</p>
+<h2>The four calculators</h2>
+<p>Pip value shows what a one pip move is worth, using 1 lot as the reference. It feeds the sizing formula: position size equals risk divided by stop distance times pip value. Example: a $10,000 account risking 1% ($100), a EUR/USD entry at 1.0850 and a stop at 1.0825 (25 pips), with $10 per pip per standard lot. That gives 0.4 lots. Widen the stop to 50 pips and the size halves to 0.2 lots, with the risk unchanged.</p>
+<p>Margin shows the equity locked up to hold the trade. Risk is what you lose if the stop is hit ($100 in the example). Margin is the capital tied up, which is much larger. A trade can be sized correctly and still cause a margin call if the account lacks free equity.</p>
+<p>Profit and loss shows the outcome of a trade from its open and close price. Run it twice, once at the target and once at the stop, and compare the dollars. A setup risking $100 to make $80 can look attractive on a chart and poor on paper.</p>
+<p>Swaps shows the daily overnight cost or credit for long and short separately. Direction matters, because one side can cost while the other earns. Swaps add up over multi week holds, gold and high differential pairs can carry larger charges, and most brokers charge triple on Wednesday for the weekend. If you close before rollover, you can skip this tab.</p>
+<h2>The order to use them in</h2>
+<p>Pip value at 1 lot, then the sizing formula, then margin at that size, then profit and loss at target and stop, then swaps if you hold overnight. It takes about a minute. Skip steps and you end up guessing size, being shaken out by normal noise, or taking trades whose reward does not justify the risk.</p>
+<h2>Two things to add by hand</h2>
+<p>Add the spread to your stop distance. A 25 pip stop with a 1 pip spread is really 26 pips of risk. And always round the size down: rounding 0.083 lots up to 0.09 pushes you past your risk limit.</p>
+<div class="tg"><span>Follow the live account for free on Telegram.</span><a class="b" href="https://t.me/wendlingfx">Join on Telegram</a></div>
+<div class="src"><b>Sources</b><ul><li><a href="https://fusionmarkets.com/posts/how-to-use-fusions-trading-calculators" rel="nofollow noopener">Fusion Markets: How to Use Fusion&#x27;s Trading Calculators</a></li></ul></div>
+</article></main>
+<footer><div class="wrap">Educational content, not financial advice. Trading on margin is high risk. <a href="/">wendlingfx.com</a></div></footer>
+</body></html>

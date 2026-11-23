@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drawdown maths: why losses cost more than they look · Wendling FX</title>
+<meta name="description" content="A 50% loss needs a 100% gain to undo. The curve is steeper than most traders feel, and it is the reason position size matters more than entries.">
+<link rel="canonical" href="https://wendlingfx.com/blog/drawdown-maths-why-losses-cost-more-than-they-look/">
+<meta property="og:title" content="Drawdown maths: why losses cost more than they look"><meta property="og:description" content="A 50% loss needs a 100% gain to undo. The curve is steeper than most traders feel, and it is the reason position size matters more than entries."><meta property="og:type" content="article"><meta property="og:image" content="https://wendlingfx.com/blog/drawdown-maths-why-losses-cost-more-than-they-look/chart.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Unbounded:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#0A0A0A;--panel:#141414;--line:#262626;--text:#fff;--muted:#A3A3A3;--lime:#C6FF3D;--tg:#2AABEE}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:18px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:var(--lime);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:760px;margin:0 auto;padding:0 24px}
+header{border-bottom:1px solid var(--line)}.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{font-family:Unbounded,sans-serif;font-weight:700;font-size:20px;color:var(--text);letter-spacing:-.03em}.brand b{color:var(--lime);font-weight:700}
+.nav a.l{color:var(--muted);font-size:15px}
+h1,h2{font-family:Unbounded,sans-serif;letter-spacing:-.03em}h1{font-size:clamp(30px,5vw,46px);line-height:1.1;margin:48px 0 12px}
+h2{font-size:22px;margin:36px 0 10px}.meta{color:var(--muted);font-size:15px;margin-bottom:28px}.dek{font-size:20px;color:#ddd}
+img.cover{width:100%;height:auto;border-radius:14px;border:1px solid var(--line);margin:8px 0 12px}
+.src{border-top:1px solid var(--line);margin-top:40px;padding-top:20px;font-size:15px;color:var(--muted)}.src li{margin:4px 0}
+.tg{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:36px 0}
+.tg a.b{background:var(--tg);color:#fff;border-radius:999px;padding:10px 18px;font-weight:600}
+.list a.post{display:block;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0;color:var(--text)}.list a.post:hover{text-decoration:none;border-color:#3a3a3a}
+.list .d{color:var(--muted);font-size:14px}.list h3{font-family:Unbounded,sans-serif;font-size:19px;margin:6px 0}
+footer{border-top:1px solid var(--line);margin-top:56px;padding:24px 0 40px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="brand" href="/">wendling<b>fx</b></a><a class="l" href="/blog/">Blog</a></div></header>
+<main class="wrap">
+
+<article><h1>Drawdown maths: why losses cost more than they look</h1><div class="meta">November 23, 2026 · Wendling FX</div><p class="dek">A 50% loss needs a 100% gain to undo. The curve is steeper than most traders feel, and it is the reason position size matters more than entries.</p>
+<img class="cover" src="/blog/drawdown-maths-why-losses-cost-more-than-they-look/chart.png" alt="Left: the gain needed to recover from losses of 10, 20, 40 and 50 percent. Right: account loss and recovery gain after six losing trades in a row at 1, 5 and 10 percent risk per trade">
+<h2>The asymmetry</h2>
+<p>Gains and losses are not mirror images. Lose 10% and you need 11.1% to get back to even. Lose 50% and the remaining capital has to double. The rule behind it is simple: a loss of d needs a gain of d divided by (1 minus d), because every percentage you earn afterwards is applied to a smaller account.</p>
+<p>Take $10,000 that falls to $5,000. A 20% gain on what is left adds $1,000, not the $2,000 you just lost. That gap is why deep drawdowns feel so slow to repair.</p>
+<h2>Six losses in a row is not rare</h2>
+<p>If a strategy wins half of its trades, six losses in a row show up about once in every 64 sequences. Not common, not exotic. What happens next depends almost entirely on how much you risk per trade. Using the compounding formula, with fixed risk on each trade:</p>
+<p>At 1% risk, the account is down about 5.9% and needs 6.2% to recover. At 5%, it is down 26.5% and needs 36%. At 10%, it is down 46.9% and needs about 88%. The streak is identical. Only the size changed.</p>
+<h2>Where traders get caught</h2>
+<p>Higher risk can lift returns in the short run, but past a certain point it lowers them over time, because the drawdowns eat more than the extra size earns. There is also a behavioural cost. At a 40% drawdown you need roughly 67% to recover, and that is usually the moment people abandon a sound system, widen stops or start forcing trades.</p>
+<h2>Three rules that follow from the maths</h2>
+<p>Decide the largest drawdown you can accept first, then size positions to fit it. A 20% limit does not fit 5% risk per trade, since ten losses at 5% already put the account near 40% down.</p>
+<p>Treat 1% to 2% risk per trade as a ceiling, not a target.</p>
+<p>Cut size while you are in a drawdown. Fixed percentage risk does this on its own, because the dollar risk shrinks with the account. Fixed lot sizes keep the same exposure and dig deeper.</p>
+<h2>Why we care</h2>
+<p>Survival depends less on the quality of entries than on making sure an ordinary losing streak never turns into a hole you cannot climb out of. Work out your recovery numbers before you need them. The chart above is computed from the formula, not from our results.</p>
+<div class="tg"><span>Follow the live account for free on Telegram.</span><a class="b" href="https://t.me/wendlingfx">Join on Telegram</a></div>
+<div class="src"><b>Sources</b><ul><li><a href="https://fusionmarkets.com/posts/drawdown-maths" rel="nofollow noopener">Fusion Markets: Drawdown Maths, the True Cost of Losses</a></li></ul></div>
+</article></main>
+<footer><div class="wrap">Educational content, not financial advice. Trading on margin is high risk. <a href="/">wendlingfx.com</a></div></footer>
+</body></html>

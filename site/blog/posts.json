@@ -4,5 +4,35 @@
     "title": "Week in markets: AI doubts hit stocks, gold and bitcoin",
     "date": "2026-11-20",
     "dek": "A hawkish set of Fed minutes and growing unease over the AI buildout pushed nearly every major market lower."
+  },
+  {
+    "slug": "drawdown-maths-why-losses-cost-more-than-they-look",
+    "title": "Drawdown maths: why losses cost more than they look",
+    "date": "2026-11-23",
+    "dek": "A 50% loss needs a 100% gain to undo. The curve is steeper than most traders feel, and it is the reason position size matters more than entries."
+  },
+  {
+    "slug": "every-order-type-and-where-each-one-fails",
+    "title": "Every order type, and where each one fails",
+    "date": "2026-11-23",
+    "dek": "Market, limit, stop, stop-limit, trailing and OCO. Each one gives you certainty on one thing and takes it away on another."
+  },
+  {
+    "slug": "what-changes-when-you-trade-over-the-holidays",
+    "title": "What changes when you trade over the holidays",
+    "date": "2026-11-23",
+    "dek": "Spreads do not necessarily widen in December. The real risks are thin liquidity and longer gaps."
+  },
+  {
+    "slug": "how-to-size-a-trade-with-the-fusion-calculators",
+    "title": "How to size a trade with the Fusion calculators",
+    "date": "2026-11-23",
+    "dek": "Pip value, margin, profit and loss, and swaps. A one minute routine that turns a chart idea into a position you can afford to be wrong on."
+  },
+  {
+    "slug": "five-free-tools-to-follow-the-markets",
+    "title": "Five free tools to follow the markets",
+    "date": "2026-11-23",
+    "dek": "A short list from a Fusion Markets author: one course, one news feed, one charting platform, one macro newsletter and one economic calendar."
   }
 ]

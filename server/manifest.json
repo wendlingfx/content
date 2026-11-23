@@ -24,5 +24,15 @@
   "server/copy-watch.json": "private/copy-watch.json",
   "site/blog/week-in-markets-2026-11-20/week.png": "blog/week-in-markets-2026-11-20/week.png",
   "site/blog/week-in-markets-2026-11-20/index.html": "blog/week-in-markets-2026-11-20/index.html",
-  "site/guide/forex-foundations.pdf": "guide/forex-foundations.pdf"
+  "site/guide/forex-foundations.pdf": "guide/forex-foundations.pdf",
+  "site/blog/drawdown-maths-why-losses-cost-more-than-they-look/chart.png": "blog/drawdown-maths-why-losses-cost-more-than-they-look/chart.png",
+  "site/blog/drawdown-maths-why-losses-cost-more-than-they-look/index.html": "blog/drawdown-maths-why-losses-cost-more-than-they-look/index.html",
+  "site/blog/every-order-type-and-where-each-one-fails/chart.png": "blog/every-order-type-and-where-each-one-fails/chart.png",
+  "site/blog/every-order-type-and-where-each-one-fails/index.html": "blog/every-order-type-and-where-each-one-fails/index.html",
+  "site/blog/what-changes-when-you-trade-over-the-holidays/chart.png": "blog/what-changes-when-you-trade-over-the-holidays/chart.png",
+  "site/blog/what-changes-when-you-trade-over-the-holidays/index.html": "blog/what-changes-when-you-trade-over-the-holidays/index.html",
+  "site/blog/how-to-size-a-trade-with-the-fusion-calculators/chart.png": "blog/how-to-size-a-trade-with-the-fusion-calculators/chart.png",
+  "site/blog/how-to-size-a-trade-with-the-fusion-calculators/index.html": "blog/how-to-size-a-trade-with-the-fusion-calculators/index.html",
+  "site/blog/five-free-tools-to-follow-the-markets/chart.png": "blog/five-free-tools-to-follow-the-markets/chart.png",
+  "site/blog/five-free-tools-to-follow-the-markets/index.html": "blog/five-free-tools-to-follow-the-markets/index.html"
 }
