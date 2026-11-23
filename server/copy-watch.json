@@ -7,9 +7,9 @@
   "max_day_drop_pct": 20,
   "expiries": [
     {
-      "name": "VPS do MQL5 (fim do teste grátis, vira US$ 15/mês)",
-      "date": "2026-11-21",
-      "warn_days": 1
+      "name": "VPS do MQL5 6947356 (US$ 15/mês, paga em 23/11)",
+      "date": "2026-12-23",
+      "warn_days": 4
     },
     {
       "name": "Assinatura do sinal Onyx no MQL5",
