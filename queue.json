@@ -44,5 +44,12 @@
     "file": "wendlingfx-2026-11-20-market.mp4",
     "due": "2026-11-21T13:00:00Z",
     "text": "The week in markets, Mon 16 to Fri 20: Nasdaq -9.4%, Gold -8.9%, WTI oil -4.9%. Full notes at wendlingfx.com/blog. #forex #gold #markets #trading"
+  },
+  {
+    "id": "levels-2026-11-23",
+    "file": "wendlingfx-2026-11-23-levels.mp4",
+    "noTelegram": true,
+    "due": "2026-11-23T11:00:00Z",
+    "text": "Levels on the chart this week: XAUUSD, EURUSD, BTCUSD. Last week high and low, yesterday high and low, week open. #forex #gold #eurusd #trading"
   }
 ]
