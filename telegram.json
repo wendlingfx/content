@@ -74,5 +74,11 @@
     "type": "photo",
     "file": "media/cards/wendlingfx-mindset-2026-11-25.png",
     "caption": "Cash is a position. Today we held it.\n\nNo trades today. Every trade on the account is public: wendlingfx.com"
+  },
+  {
+    "id": "blog-a-trading-plan-that-survives-volatility",
+    "due": "2026-11-26T15:00:00Z",
+    "type": "text",
+    "caption": "How to write a trading plan that survives volatility\n\nMost plans fail in fast markets because the trader drops them, not because the strategy breaks. Here is how to write one that holds.\n\nRead: https://wendlingfx.com/blog/a-trading-plan-that-survives-volatility/"
   }
 ]

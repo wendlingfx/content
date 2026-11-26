@@ -1,0 +1,91 @@
+{
+ "slug": "a-trading-plan-that-survives-volatility",
+ "title": "How to write a trading plan that survives volatility",
+ "date": "2026-11-26",
+ "dek": "Most plans fail in fast markets because the trader drops them, not because the strategy breaks. Here is how to write one that holds.",
+ "image": "site/blog/a-trading-plan-that-survives-volatility/chart.png",
+ "image_alt": "The five parts of a trading plan: entry criteria, risk framework, management rules, exit rules and review process",
+ "sections": [
+  {
+   "h": "",
+   "p": [
+    "Most trading plans are written on a quiet day and assume orderly moves. Then price gaps and overshoots, and the plan gets dropped. The strategy rarely breaks first; the trader stops following it."
+   ]
+  },
+  {
+   "h": "Start with risk, not entries",
+   "p": [
+    "Write down the most you will risk per trade and per day or week, and what happens to those numbers when volatility jumps. Cut size when the average true range (ATR) expands, or keep risk constant and widen the stop. Either can work. Deciding mid spike does not."
+   ]
+  },
+  {
+   "h": "Size from volatility, not a fixed stop",
+   "p": [
+    "A fixed 20 pip stop can be fine in a calm week and sit inside the noise in a busy one. Over the last 28 sessions, the EUR/USD daily range ran from 27 to 125 pips.",
+    "Set the stop from ATR, then work the lot size back from it so the amount at risk stays the same. The arithmetic is in [how to size a trade](/blog/how-to-size-a-trade-with-the-fusion-calculators/)."
+   ]
+  },
+  {
+   "h": "Decide when you stay out",
+   "p": [
+    "List when you do not trade: high impact releases, surprise headlines, [thin holiday sessions](/blog/what-changes-when-you-trade-over-the-holidays/). If you trade events, write the rule, such as no new positions within 15 minutes of a release or no entry above a set spread."
+   ]
+  },
+  {
+   "h": "Write the management rules first",
+   "p": [
+    "Decide how the stop trails, whether you take partials and what forces an early exit. Examples: stop to breakeven at 1R, trail behind structure rather than candles, close fully if the higher timeframe structure breaks. Check that your [order types](/blog/every-order-type-and-where-each-one-fails/) can carry out the rule."
+   ]
+  },
+  {
+   "h": "Set a drawdown limit, and the response",
+   "p": [
+    "Pick the drawdown you accept and the action when it is hit: smaller size, a pause or a review. Risk per trade sets the pace. Five losses in a row cost 4.9% at 1% risk and 14.1% at 3%.",
+    "Without a set response, drawdowns end in doubling down or revenge trades. The [drawdown maths](/blog/drawdown-maths-why-losses-cost-more-than-they-look/) show why deep holes fill slowly."
+   ]
+  },
+  {
+   "h": "Plan for two other outcomes",
+   "p": [
+    "Before entry, note at least two ways the trade can misbehave and your answer to each: a spike through the level that reverses, hours of sideways drift, spreads blowing out."
+   ]
+  },
+  {
+   "h": "Keep it to five parts",
+   "p": [
+    "More filters make you freeze in a fast market. Five parts are enough: entry criteria, risk framework, management rules, exit rules and a review process."
+   ]
+  },
+  {
+   "h": "If you copy a strategy",
+   "p": [
+    "A copier does not place the trades, but the plan still matters. The provider's plan sets risk per trade and drawdown handling, so read it first. Your part is the risk setting on the copy and what you do if the account falls further than you accept. Decide that on a quiet day too."
+   ]
+  }
+ ],
+ "figures": [
+  {
+   "image": "site/blog/a-trading-plan-that-survives-volatility/fig2.png",
+   "after": 2,
+   "alt": "Bar chart: EUR/USD daily range in pips over the last 28 sessions, from 27 to 125 pips, average 66",
+   "image_url": "blog/a-trading-plan-that-survives-volatility/fig2.png"
+  },
+  {
+   "image": "site/blog/a-trading-plan-that-survives-volatility/fig3.png",
+   "after": 5,
+   "alt": "Bar chart: drawdown after 3, 5, 8 and 10 losing trades in a row at 1% and 3% risk per trade",
+   "image_url": "blog/a-trading-plan-that-survives-volatility/fig3.png"
+  }
+ ],
+ "sources": [
+  {
+   "title": "Based on: How to Structure a Trading Plan That Actually Survives Volatility (Fusion Markets)",
+   "url": "https://fusionmarkets.com/posts/how-to-structure-a-trading-plan"
+  },
+  {
+   "title": "Wendling FX market data: EUR/USD daily high and low, 28 sessions to 25 November 2026",
+   "url": "https://wendlingfx.com/data/market.json"
+  }
+ ],
+ "image_url": "blog/a-trading-plan-that-survives-volatility/chart.png"
+}
