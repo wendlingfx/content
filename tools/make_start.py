@@ -3,7 +3,7 @@
 import json, os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__))))
 import make_post as mp
-REF = 'https://hub.fusionmarkets.com/en/auth/sign-up?refcode=113969'
+REF = 'https://fusionmarkets.com/?refcode=125918'
 STRAT = 'https://app.fusionmarkets.com/copy/strategy/125053?u=LucasWend'
 CSS = '''<style>
 .paths{display:grid;gap:14px;margin:28px 0}
