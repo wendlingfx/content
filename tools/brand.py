@@ -31,7 +31,7 @@ def _inter(size):
 
 def _mix(c, a): return tuple(int(BG[i] + (c[i] - BG[i]) * a) for i in range(3))
 
-def header(d, kind, a=1.0, compact=False, fmt=None):
+def header(d, kind, a=1.0, compact=False, fmt=None, subline=True):
     """Full: word up to 150 px at y 70, small line at y 250 (ends near y 290).
     Compact (for inner video scenes): word 64 px at y 92, small line at y 176 (ends near y 210)."""
     word, line, col = TYPES[kind]
@@ -42,4 +42,4 @@ def header(d, kind, a=1.0, compact=False, fmt=None):
     if kind == 'diary':  # live: red dot after the word
         x = 70 + d.textlength(word, font=f) + size * 0.25; r = size * 0.13; cy = y + size * 0.62
         d.ellipse([x, cy - r, x + 2 * r, cy + r], fill=_mix(RED, a))
-    d.text((78, ly), line, font=_inter(ls), fill=_mix(MUTED, a))
+    if subline: d.text((78, ly), line, font=_inter(ls), fill=_mix(MUTED, a))

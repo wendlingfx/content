@@ -13,7 +13,7 @@ Prints one JSON line per card: {"file", "kind", "caption", "period"}.
 Same rules as the videos: English, % only, real numbers, no promises.
 """
 import json, os, sys, random, urllib.request, datetime as dt
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from brand import header
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -180,11 +180,45 @@ def pick_quote(seed):
     q = random.Random(seed).choice(left)
     return q, used + [q['id']], up
 
+def pick_bg(date):
+    """Background photo for the MINDSET card: Lucas's own photo on Wednesdays (if tools/bg/lucas has any),
+    otherwise a stock photo from tools/bg/mindset not used in the last 30 cards. Returns (path, used_list, used_file)."""
+    import glob
+    bgdir = os.path.join(HERE, 'bg')
+    up = os.path.join(os.path.dirname(HERE), 'media', 'cards', 'mindset-bg-used.json')
+    try: used = json.load(open(up))
+    except Exception: used = []
+    own = sorted(glob.glob(os.path.join(bgdir, 'lucas', '*.jpg')) + glob.glob(os.path.join(bgdir, 'lucas', '*.png')))
+    pool = own if (own and date.weekday() == 2) else sorted(glob.glob(os.path.join(bgdir, 'mindset', '*.jpg')))
+    if not pool: return None, used, up
+    names = [os.path.basename(p) for p in pool]
+    left = [p for p, n in zip(pool, names) if n not in used[-30:]] or pool
+    p = random.Random(date.isoformat()).choice(left)
+    return p, (used + [os.path.basename(p)])[-60:], up
+
+def photo_canvas(path):
+    """Photo filling 1080x1920, softened, under a dark overlay (darker at the top and bottom for the text)."""
+    import math
+    im = Image.open(path).convert('RGB')
+    sc = max(W / im.width, H / im.height); im = im.resize((int(im.width * sc) + 1, int(im.height * sc) + 1), Image.LANCZOS)
+    x = (im.width - W) // 2; y = (im.height - H) // 2
+    im = im.crop((x, y, x + W, y + H))
+    if 'lucas' in path: im = im.filter(ImageFilter.GaussianBlur(1.6))
+    col = Image.new('L', (1, H))
+    for yy in range(H):
+        t = yy / H
+        a = 0.62 + (0.12 * math.cos(t * math.pi * 2) ** 2 if t < 0.25 else 0)
+        if t >= 0.6: a = 0.62 + (t - 0.6) / 0.4 * 0.32
+        col.putpixel((0, yy), int(a * 255))
+    img = Image.composite(Image.new('RGB', (W, H), (6, 6, 6)), im, col.resize((W, H)))
+    return img, ImageDraw.Draw(img)
+
 def mindset(date, out_dir, stats, dry=False):
     s = date.isoformat()
     q, used, up = pick_quote(s)
-    img, d = canvas()
-    header(d, 'mindset', fmt='IMAGE')
+    bgp, bg_used, bg_up = pick_bg(date)
+    img, d = photo_canvas(bgp) if bgp else canvas()
+    header(d, 'mindset', fmt='IMAGE', subline=False)
     title = date.strftime('%A, %b %-d')
     tc(d, 340, title, fit(d, title, 60, 800), WHITE)
     size = 96
@@ -195,14 +229,16 @@ def mindset(date, out_dir, stats, dry=False):
     y = 470 + (700 - len(lines) * size * 1.25) / 2
     for ln in lines:
         tc(d, y, ln, f, WHITE); y += size * 1.25
-    tc(d, 1260, 'No trades today.', inter(46, 'Medium'), MUTED)
+    tc(d, 1260, 'No trades today.', inter(46, 'Medium'), (200, 200, 200) if bgp else MUTED)
     tc(d, 1600, total_line(stats), inter(40, 'SemiBold'), WHITE)
     f = unb(84); w1 = d.textlength('w', font=f); w2 = d.textlength('fx', font=f); xx = CX - (w1 + w2) / 2
     d.text((xx, 1650), 'w', font=f, fill=WHITE); d.text((xx + w1, 1650), 'fx', font=f, fill=LIME)
-    tc(d, 1750, 'Verified on Myfxbook  ·  wendlingfx.com', inter(32, 'Medium'), MUTED)
-    tc(d, 1810, 'Trading on margin is high risk. Not financial advice.', inter(26, 'Regular'), DIM)
+    tc(d, 1750, 'Verified on Myfxbook  ·  wendlingfx.com', inter(32, 'Medium'), (185, 185, 185) if bgp else MUTED)
+    tc(d, 1810, 'Trading on margin is high risk. Not financial advice.', inter(26, 'Regular'), (150, 150, 150) if bgp else DIM)
     name = f'wendlingfx-mindset-{s}.png'; img.save(os.path.join(out_dir, name), optimize=True)
-    if not dry: json.dump(used, open(up, 'w'))
+    if not dry:
+        json.dump(used, open(up, 'w'))
+        if bgp: json.dump(bg_used, open(bg_up, 'w'))
     return {'file': name, 'kind': 'mindset', 'period': s, 'quote': q['id'],
             'caption': q['quote'] + "\n\nNo trades today. Every trade on the account is public: wendlingfx.com"}
 
