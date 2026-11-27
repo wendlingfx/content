@@ -685,6 +685,7 @@
     draw();
   });
   var rt; window.addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(draw,150); });
+  window.wfxLive=function(f){ if(!pts||pts.length<2) return; if(pts[pts.length-1].open) pts.pop(); if(f){ var lg=pts[pts.length-1].g; pts.push({t:Math.max(Date.now(),pts[pts.length-1].t+60000),g:((1+lg/100)*(1+f/100)-1)*100,open:true}); } draw(); };
 })();
 </script>
 
@@ -699,6 +700,7 @@
       if(!n){txt.textContent='no open positions right now.';}
       else{var f=+d.floatingPct||0;txt.innerHTML=n+(n===1?' position open':' positions open')+', floating <span class="'+(f>=0?'pos':'neg')+'">'+pc(f)+'</span> of the account.';}
       box.hidden=false;
+      if(window.wfxLive) window.wfxLive(n?(+d.floatingPct||0):0);
     }).catch(function(){box.hidden=true;});
   }
   tick(); setInterval(tick,60000);

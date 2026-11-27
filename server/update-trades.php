@@ -48,16 +48,22 @@ function mfx_history(string $session, int $id): ?array {
 }
 
 // Sessions last about a month and only work from this server's IP: reuse, re-login when needed.
+// Closed trades read straight from cTrader by ctrader-live.php (private/ct-trades.json). When fresh and for the
+// same account and start, they are the source of the site numbers, so a Myfxbook outage does not freeze the site.
+$ct = is_file(__DIR__ . '/ct-trades.json') ? (json_decode((string) file_get_contents(__DIR__ . '/ct-trades.json'), true) ?: []) : [];
+$ctOk = $ct && ($ct['login'] ?? '') === trim((string) ($ov['ctrader_login'] ?? '')) && ($ct['start'] ?? '') === trim((string) ($ov['start'] ?? ''))
+    && time() - (int) ($ct['at'] ?? 0) < 3 * 3600 && isset($ct['trades']);
 $session = is_file($sessFile) ? trim((string) file_get_contents($sessFile)) : '';
 $history = $session !== '' ? mfx_history($session, (int) $cfg['account_id']) : null;
 if ($history === null) {
     $session = mfx_login($cfg, $sessFile);
-    if ($session === null) exit(1);
-    $history = mfx_history($session, (int) $cfg['account_id']);
+    if ($session === null && !$ctOk) exit(1);
+    $history = $session !== null ? mfx_history($session, (int) $cfg['account_id']) : null;
 }
 if ($history === null) {
     fwrite(STDERR, "could not read history\n");
-    exit(1);
+    if (!$ctOk) exit(1);
+    $history = []; $session = (string) $session;
 }
 
 // Account data first: the current balance lets us size every trade in % of the account.
@@ -123,6 +129,12 @@ $all = array_values($store);
 // numbers are rebuilt from those trades instead of Myfxbook's lifetime figures.
 $start = trim((string) ($ov['start'] ?? ''));
 if ($start !== '') $all = array_values(array_filter($all, fn($t) => strcmp($t['closed'], $start) >= 0));
+$source = 'myfxbook';
+if ($ctOk) {
+    $all = array_values(array_map(fn($t) => ['closed' => $t['closed'], 'symbol' => $t['symbol'], 'side' => $t['side'], 'result' => (float) $t['pct'], 'pct' => (float) $t['pct']], $ct['trades']));
+    if ($start !== '') $all = array_values(array_filter($all, fn($t) => strcmp($t['closed'], $start) >= 0));
+    $source = 'ctrader';
+}
 
 $trades = array_reverse($all);
 $allCount = count($trades);
@@ -154,7 +166,8 @@ $gw = 0.0; $gl = 0.0; foreach ($all as $t) { if ($t['result'] > 0) $gw += $t['re
 $pfStart = $gl > 0 ? round($gw / $gl, 2) : ($gw > 0 ? 99.0 : 0.0);
 $peak = 1.0; $ddStart = 0.0; $gg = 1.0;
 foreach ($all as $t) { $gg *= 1 + $t['pct'] / 100; $peak = max($peak, $gg); $ddStart = max($ddStart, round((1 - $gg / $peak) * 100, 2)); }
-if ($acc) {
+if ($acc || $source === 'ctrader') {
+    $live = is_file(dirname(__DIR__) . '/data/live.json') ? (json_decode((string) file_get_contents(dirname(__DIR__) . '/data/live.json'), true) ?: []) : [];
     $winP  = array_values(array_filter(array_column($all, 'pct'), fn($p) => $p > 0));
     $lossP = array_values(array_filter(array_column($all, 'pct'), fn($p) => $p < 0));
     $first = $all ? substr($all[0]['closed'], 0, 10) : ($start !== '' ? substr($start, 0, 10) : gmdate('Y-m-d'));
@@ -164,7 +177,7 @@ if ($acc) {
         'gain'         => $start !== '' ? ($curve ? end($curve)['g'] : 0) : (float) ($acc['gain'] ?? 0),
         'profitFactor' => $start !== '' ? $pfStart : (float) ($acc['profitFactor'] ?? 0),
         'drawdown'     => $start !== '' ? $ddStart : (float) ($acc['drawdown'] ?? 0),
-        'openPct'      => ((float) ($acc['balance'] ?? 0)) > 0 ? round((((float) ($acc['equity'] ?? 0)) - (float) $acc['balance']) * 100 / (float) $acc['balance'], 2) : 0,
+        'openPct'      => !$acc ? (float) ($live['floatingPct'] ?? 0) : (((float) ($acc['balance'] ?? 0)) > 0 ? round((((float) ($acc['equity'] ?? 0)) - (float) $acc['balance']) * 100 / (float) $acc['balance'], 2) : 0),
         'winRate'      => $allCount ? round($wins * 100 / $allCount, 1) : 0,
         'trades'       => $allCount,
         'avgWin'       => $winP ? round(array_sum($winP) / count($winP), 2) : 0,
@@ -174,6 +187,7 @@ if ($acc) {
         'days'         => $daysRun,
         'perDay'       => round($allCount / $daysRun, 1),
         'check'        => $check,
+        'source'       => $source,
     ];
     $sf = dirname(__DIR__) . '/data/stats.json';
     file_put_contents($sf . '.tmp', json_encode($stats));

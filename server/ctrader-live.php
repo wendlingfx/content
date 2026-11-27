@@ -212,6 +212,80 @@ if (empty($pauseCfg['paused']) && is_file($tgCfgFile) && $balance > 0) {
     foreach ($run as $pid => $info) if (!empty($info['closed']) && time() - $info['at'] > 14 * 86400) unset($run[$pid]);
     file_put_contents($runFile, json_encode($run));
 }
+// New position alert (Telegram): one short post when a position opens on the live account.
+// No symbol, side, price or size (the strategy is what people pay for); the result follows from telegram-post.php when it closes.
+$seenFile = __DIR__ . '/open-seen.json';
+$seenOpen = is_file($seenFile) ? (json_decode((string) file_get_contents($seenFile), true) ?: null) : null;
+$nowIds = [];
+foreach (($rc['position'] ?? []) as $pos) $nowIds[(string) $pos['positionId']] = (int) ($pos['tradeData']['openTimestamp'] ?? 0);
+if ($seenOpen === null || ($seenOpen['login'] ?? '') !== $want) {
+    $seenOpen = ['login' => $want, 'ids' => array_fill_keys(array_keys($nowIds), time())]; // first run on this account: no posts
+} else {
+    if (empty($pauseCfg['paused']) && is_file($tgCfgFile)) {
+        $tgc2 = $tgc ?? (require $tgCfgFile); $tk2 = trim((string) ($tgc2['token'] ?? '')); $ch2 = (string) ($tgc2['chat'] ?? '@wendlingfx');
+        foreach ($nowIds as $pid => $ot) {
+            if (isset($seenOpen['ids'][$pid])) continue;
+            $seenOpen['ids'][$pid] = time();
+            if ($tk2 === '' || $ot <= 0 || time() * 1000 - $ot > 15 * 60000) continue; // only fresh opens
+            $c = curl_init('https://api.telegram.org/bot' . $tk2 . '/sendMessage');
+            curl_setopt_array($c, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 20, CURLOPT_POST => true, CURLOPT_POSTFIELDS => [
+                'chat_id' => $ch2, 'disable_web_page_preview' => 'true',
+                'text' => "\u{1F535} New position just opened on the live account.\nThe result is posted here when it closes, in % of the account.\nCopy it automatically: https://wendlingfx.com/start/"]]);
+            curl_exec($c); curl_close($c);
+        }
+    } else foreach ($nowIds as $pid => $ot) $seenOpen['ids'][$pid] = $seenOpen['ids'][$pid] ?? time();
+}
+foreach ($seenOpen['ids'] as $pid => $at) if (!isset($nowIds[$pid]) && time() - $at > 30 * 86400) unset($seenOpen['ids'][$pid]);
+file_put_contents($seenFile, json_encode($seenOpen));
+
+// Closed trades straight from cTrader (every 10 min): private/ct-trades.json, read by update-trades.php so the
+// site does not depend on Myfxbook. Each trade in % of the balance before it; no money values are stored here.
+$ctFile = __DIR__ . '/ct-trades.json';
+$ctOld = is_file($ctFile) ? (json_decode((string) file_get_contents($ctFile), true) ?: []) : [];
+$startIso = trim((string) ($ov['start'] ?? ''));
+if ($startIso !== '' && (($ctOld['login'] ?? '') !== $want || time() - (int) ($ctOld['at'] ?? 0) > 540)) {
+    $from = strtotime($startIso) ?: (time() - 7 * 86400); $deals = []; $ok = true;
+    for ($t0 = $from; $t0 < time() + 60; $t0 += 7 * 86400) {
+        $dl = call($s, 2133, ['ctidTraderAccountId' => $accId, 'fromTimestamp' => $t0 * 1000, 'toTimestamp' => min($t0 + 7 * 86400, time() + 60) * 1000], 2134);
+        if (isset($dl['_error'])) { $ok = false; break; }
+        foreach (($dl['deal'] ?? []) as $dd) $deals[(string) $dd['dealId']] = $dd;
+    }
+    if ($ok) {
+        $symFile2 = __DIR__ . '/ctrader-symbols.json';
+        $symN2 = is_file($symFile2) ? (json_decode((string) file_get_contents($symFile2), true) ?: []) : [];
+        $byPos = [];
+        foreach ($deals as $dd) $byPos[(string) ($dd['positionId'] ?? '')][] = $dd;
+        $trades = [];
+        foreach ($byPos as $pid => $ds) {
+            $comm = 0.0; $gross = 0.0; $after = null; $closeTs = 0; $side = ''; $sid = ''; $dg = $md;
+            foreach ($ds as $dd) {
+                $cp = $dd['closePositionDetail'] ?? null;
+                $dg = (int) ($cp['moneyDigits'] ?? ($dd['moneyDigits'] ?? $md));
+                $comm += (float) ($dd['commission'] ?? 0) / (10 ** $dg);
+                $sid = (string) ($dd['symbolId'] ?? $sid);
+                if ($cp) {
+                    $gross += ((float) ($cp['grossProfit'] ?? 0) + (float) ($cp['swap'] ?? 0)) / (10 ** $dg);
+                    $ts = (int) ($dd['executionTimestamp'] ?? 0);
+                    if ($ts >= $closeTs) { $closeTs = $ts; $after = (float) ($cp['balance'] ?? 0) / (10 ** $dg); }
+                    $side = ((int) ($dd['tradeSide'] ?? 1)) === 1 ? 'Sell' : 'Buy'; // closing deal is opposite to the position
+                }
+            }
+            if ($after === null || $closeTs <= 0) continue; // still open
+            if (!isset($symN2[$sid])) {
+                $l2 = call($s, 2114, ['ctidTraderAccountId' => $accId], 2115);
+                foreach (($l2['symbol'] ?? []) as $x) $symN2[(string) $x['symbolId']] = $x['symbolName'] ?? '';
+                file_put_contents($symFile2, json_encode($symN2));
+            }
+            $net = $gross + $comm; $before = $after - $net;
+            $pct = $before > 0 ? round($net * 100 / $before, 2) : 0.0;
+            $trades[] = ['closed' => gmdate('Y-m-d\TH:i\Z', intdiv($closeTs, 1000)), 'symbol' => $symN2[$sid] ?? '', 'side' => $side, 'result' => $pct, 'pct' => $pct, 'pid' => $pid];
+        }
+        usort($trades, fn($a, $b) => strcmp($a['closed'], $b['closed']));
+        file_put_contents($ctFile . '.tmp', json_encode(['login' => $want, 'at' => time(), 'start' => $startIso, 'trades' => $trades]));
+        rename($ctFile . '.tmp', $ctFile);
+    }
+}
+
 // Once an hour: daily bars of the main markets for the weekly market notes (public prices only): data/market.json
 $mf = dirname(__DIR__) . '/data/market.json';
 if (!is_file($mf) || time() - filemtime($mf) > 3300) {
