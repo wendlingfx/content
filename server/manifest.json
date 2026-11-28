@@ -52,5 +52,6 @@
   "site/blog/week-in-markets-2026-11-27/week.png": "blog/week-in-markets-2026-11-27/week.png",
   "site/blog/week-in-markets-2026-11-27/daily.png": "blog/week-in-markets-2026-11-27/daily.png",
   "site/blog/week-in-markets-2026-11-27/range.png": "blog/week-in-markets-2026-11-27/range.png",
-  "site/blog/week-in-markets-2026-11-27/index.html": "blog/week-in-markets-2026-11-27/index.html"
+  "site/blog/week-in-markets-2026-11-27/index.html": "blog/week-in-markets-2026-11-27/index.html",
+  "server/bot-hook.php": "bot-hook.php"
 }
