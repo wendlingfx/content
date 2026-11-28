@@ -92,10 +92,13 @@ def main():
     SHADE = overlay()
     scenes = [(scene(l, p, d, c, first=(i == 0)), d) for i, (l, p, d, c) in enumerate(st['scenes'])]
     scenes.append((mv.end_card(st['end']), 3.4))
-    music = opt.get('--music', 'e05.m4a')
+    music = opt.get('--music', 'i02.m4a'); start = opt.get('--music-start', '0')
+    import subprocess
+    track = '/tmp/story-music.m4a'
+    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-ss', start, '-i', os.path.join(HERE, 'music', music), '-af', 'afade=t=in:d=0.3', '-c:a', 'aac', '-b:a', '192k', track], check=True)
     os.makedirs(out, exist_ok=True)
     name = f"wendlingfx-story-{opt.get('--story', 'i-changed')}-{day.isoformat()}.mp4"
-    mv.render(scenes, os.path.join(out, name), os.path.join(HERE, 'music', music))
+    mv.render(scenes, os.path.join(out, name), track)
     print(json.dumps({'file': name, 'text': st['text'], 'music': music}))
 
 
