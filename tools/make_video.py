@@ -287,10 +287,10 @@ def kind_promo():
         tc(d, 640, 'Weekly results and short videos', inter(46, 'Medium'), mix(WHITE, a))
         b = ease((t - 0.6) / 0.5)
         tc(d, 860, 't.me/wendlingfx', fit(d, 't.me/wendlingfx', 96, 800), mix((42, 171, 238), b))
-        tc(d, 1000, 'Link in bio', inter(40, 'Medium'), mix(MUTED, b))
+        tc(d, 1000, 'Search "Wendling FX" on Telegram', inter(40, 'Medium'), mix(MUTED, b))
         return fade(img, t, 0.15)
     scenes = [(hook(lines, label, 'Search: Wendling FX'), 3.0), (card, 4.2), (end_card('Free channel. Leave anytime.'), 3.2)]
-    text = 'Follow the live account for free on Telegram: daily close, weekly results and short videos. Search Wendling FX or use the link in bio. #forex #trading #copytrading'
+    text = 'Follow the live account for free on Telegram: daily close, weekly results and short videos. Search Wendling FX on Telegram or go to t.me/wendlingfx. #forex #trading #copytrading'
     return scenes, text
 
 def kind_howto():
