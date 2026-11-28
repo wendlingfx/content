@@ -94,5 +94,11 @@
     "type": "photo",
     "file": "media/cards/wendlingfx-day-2026-11-27.png",
     "caption": "Daily close, Nov 27: +195% on the account. 5 trades closed.\n\nVerified record: wendlingfx.com"
+  },
+  {
+    "id": "blog-2026-11-27",
+    "due": "2026-11-28T13:05:00Z",
+    "type": "text",
+    "caption": "Week in markets: Nvidia lifts stocks, hike bets stay\n\nA leadership reversal at Nvidia sparked a rebound in stocks, while hot inflation data kept a December Fed hike on the table.\n\nRead: https://wendlingfx.com/blog/week-in-markets-2026-11-27/"
   }
 ]

@@ -1,0 +1,120 @@
+{
+ "slug": "week-in-markets-2026-11-27",
+ "title": "Week in markets: Nvidia lifts stocks, hike bets stay",
+ "date": "2026-11-27",
+ "dek": "A leadership reversal at Nvidia sparked a rebound in stocks, while hot inflation data kept a December Fed hike on the table.",
+ "sections": [
+  {
+   "h": "The short version",
+   "p": [
+    "After last week's sell off, most risk assets bounced. The Nasdaq 100 gained 5.9%, the Dow 5.1% and the DAX 3.8%. Gold recovered 3.3%. WTI crude slipped 0.7% and bitcoin 1.8%. Currencies barely moved: EUR/USD lost 0.3%, GBP/USD added 0.1% and USD/JPY rose 0.7%.",
+    "The bounce came with a caveat. US data released midweek showed strong growth and sticky inflation, so the case for another Fed hike did not go away. For the backdrop, see [last week's notes](/blog/week-in-markets-2026-11-20/)."
+   ]
+  },
+  {
+   "h": "Nvidia turned the mood on Monday",
+   "p": [
+    "Before Monday's open came news that Jensen Huang would return as Nvidia's chief executive, less than two weeks after he had stepped down. The stock jumped more than 31% that day and pulled the AI trade up with it. On our data the Nasdaq 100 was already 6.3% above the prior Friday's close by Monday evening.",
+    "The rest of the week was choppier. Nvidia fell on Tuesday and again on Wednesday, and the Nasdaq 100 gave back about half of Monday's gain before buyers returned. US markets were shut on Thursday for Thanksgiving and closed early on Friday, when technology led again. AP said the S&P 500 had its strongest week since April 2025. Holiday sessions are thin, which is worth knowing before you size a trade: [what changes when you trade over the holidays](/blog/what-changes-when-you-trade-over-the-holidays/)."
+   ]
+  },
+  {
+   "h": "Hot data, and a hike still in play",
+   "p": [
+    "Wednesday brought a pile of US numbers. The BEA revised third quarter growth up to a 4.3% annual rate from 3.4%. In October the core PCE price index rose 0.3% on the month and 3.3% on the year, with the headline index at 3.8%. Personal income grew 0.7%, but spending adjusted for prices slipped slightly.",
+    "The Fed's Beige Book, published the same afternoon, painted a softer picture: eight of twelve districts grew slightly to moderately, four saw no change, and consumer spending was little changed. Prices rose moderately, and contacts said input costs were climbing faster than the prices they could charge. Market reports said futures still priced a December rate rise as close to certain. The 10 year Treasury yield ended Friday at 4.94%, up from 4.85% on Wednesday, according to AP."
+   ]
+  },
+  {
+   "h": "Gold bounced, oil went nowhere",
+   "p": [
+    "Gold slid to its lowest level in more than a year on Wednesday, then rallied into Friday. Market reports linked the rebound to a pause in forced selling as stocks calmed over the holiday and to a softer dollar after Monday's peak. Our Friday range chart shows how much ground gold still covered in a single session.",
+    "WTI dropped 4.1% on Monday, recovered midweek, and fell back on Friday, ahead of an OPEC meeting set for Sunday. US crude inventories rose for a third week in a row. Bitcoin had the widest Friday range of the nine markets we track and ended the week slightly lower."
+   ]
+  },
+  {
+   "h": "What to watch next week",
+   "p": [
+    "Tuesday, December 1: BLS job openings and labor turnover (JOLTS) for October.",
+    "Wednesday, December 2: EIA weekly petroleum status report.",
+    "Friday, December 4: BLS employment report for November.",
+    "Further out, the Fed meets on December 8 to 9 with new projections, and November CPI follows on December 10."
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "title": "BEA: GDP, third quarter 2026 (second estimate), November 25, 2026",
+   "url": "https://www.bea.gov/sites/default/files/2026-11/gdp3q26-2nd.pdf"
+  },
+  {
+   "title": "BEA: Personal Income and Outlays, October 2026",
+   "url": "https://www.bea.gov/news/2026/personal-income-and-outlays-october-2026"
+  },
+  {
+   "title": "Federal Reserve: Beige Book, November 2026 (summary)",
+   "url": "https://www.federalreserve.gov/monetarypolicy/beigebook202611-summary.htm"
+  },
+  {
+   "title": "Federal Reserve: Beige Book, November 2026 (PDF)",
+   "url": "https://www.federalreserve.gov/monetarypolicy/files/BeigeBook_20261125.pdf"
+  },
+  {
+   "title": "Federal Reserve: November 2026 calendar",
+   "url": "https://www.federalreserve.gov/newsevents/2026-november.htm"
+  },
+  {
+   "title": "Federal Reserve: FOMC meeting calendar",
+   "url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+  },
+  {
+   "title": "BLS: schedule of selected releases, December 2026",
+   "url": "https://www.bls.gov/schedule/2026/12_sched.htm"
+  },
+  {
+   "title": "EIA: Weekly Petroleum Status Report release schedule",
+   "url": "https://www.eia.gov/petroleum/supply/weekly/schedule.php"
+  },
+  {
+   "title": "AP via Spectrum News: stocks rally to end Wall Street's best week in over a year",
+   "url": "https://spectrumlocalnews.com/us/snplus/business/2026/11/27/stocks-rally-wall-street-best-week-in-over-a-year"
+  },
+  {
+   "title": "Yahoo Finance: stock market today, November 27, 2026 (live coverage)",
+   "url": "https://finance.yahoo.com/markets/live/stock-market-today-firday-november-27-dow-sp-500-nasdaq-black-friday-holiday-091152065.html"
+  },
+  {
+   "title": "My Weekly Stock: weekly market recap, November 23 to 27",
+   "url": "https://myweeklystock.substack.com/p/weekly-market-recap-nov-23-27-relief"
+  },
+  {
+   "title": "ANC: gold heads for weekly gain after one year low",
+   "url": "https://ancstockinvestments.com/blog/2026/11/27/gold-heads-for-weekly-gain-after-one-year-low/"
+  },
+  {
+   "title": "Discovery Alert: gold price outlook, November 2026",
+   "url": "https://discoveryalert.com/news/gold-price-outlook-fed-hikes-november-2026-2/"
+  },
+  {
+   "title": "Wendling FX market data (weekly changes)",
+   "url": "https://wendlingfx.com/data/market.json"
+  }
+ ],
+ "image": "site/blog/week-in-markets-2026-11-27/week.png",
+ "image_alt": "Bar chart: weekly change for nine markets, November 23 to 27, 2026",
+ "figures": [
+  {
+   "image": "site/blog/week-in-markets-2026-11-27/daily.png",
+   "after": 1,
+   "alt": "Line chart: daily closes for the Nasdaq 100, Dow, gold and WTI oil against the November 20 close",
+   "image_url": "blog/week-in-markets-2026-11-27/daily.png"
+  },
+  {
+   "image": "site/blog/week-in-markets-2026-11-27/range.png",
+   "after": 3,
+   "alt": "Bar chart: high to low range on November 27 for nine markets",
+   "image_url": "blog/week-in-markets-2026-11-27/range.png"
+  }
+ ],
+ "image_url": "blog/week-in-markets-2026-11-27/week.png"
+}
